@@ -1,0 +1,30 @@
+[
+  {
+    "name": "",
+    "alias": "",
+    "description": "",
+    "reference": "",
+    "tags": [],
+    "ingredients": [
+      {
+        "quantity": 0,
+        "volume": "",
+        "ingredient": "",
+        "process": "",
+        "extra": ""
+      }
+    ],
+    "steps": [
+      {
+        "step": "0",
+        "stepImages": "",
+        "instruction": ""
+      }
+    ],
+    "primaryImages": [],
+    "notes": "",
+    "isEnabled": true,
+    "titlePosition": "BL",
+    "boundRecipes": []
+  }
+]

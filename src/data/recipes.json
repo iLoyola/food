@@ -1,0 +1,446 @@
+{
+  "recipes": [
+    {
+      "name": "Healthy Granola",
+      "alias": "healthy-granola",
+      "description": "This delicious healthy granola recipe is naturally sweetened with maple syrup (or honey). It's made with oats, coconut oil and your favorite nuts and fruit. Make it your own! Recipe yields about 8 cups granola, enough for about 16 half-cup servings.",
+      "reference": "Cookie + Kate",
+      "tags": ["Breakfast", "Oats", "Nuts"],
+      "ingredients": [
+        {
+          "quantity": 4,
+          "volume": "cups",
+          "ingredient": "old-fashioned rolled oats",
+          "process": "",
+          "extra": "use certified gluten-free oats for gluten-free granola"
+        },
+        {
+          "quantity": 1.5,
+          "volume": "cups",
+          "ingredient": "nuts",
+          "process": "",
+          "extra": "option 1 cup of pecans and 1/2 cup of almonds"
+        },
+        {
+          "quantity": 1,
+          "volume": "teaspoons",
+          "ingredient": "kosher salt",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 0.5,
+          "volume": "teaspoons",
+          "ingredient": "cinnamon",
+          "process": "ground",
+          "extra": ""
+        },
+        {
+          "quantity": 0.5,
+          "volume": "cups",
+          "ingredient": "coconut oil",
+          "process": "melted",
+          "extra": ""
+        },
+        {
+          "quantity": 0.5,
+          "volume": "cups",
+          "ingredient": "maple syrup",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 1,
+          "volume": "teaspoons",
+          "ingredient": "vanilla extract",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 0.75,
+          "volume": "cups",
+          "ingredient": "dried fruit",
+          "process": "",
+          "extra": "cranberries"
+        }
+      ],
+      "steps": [
+        {
+          "step": "1",
+          "stepImages": [],
+          "instruction": "Preheat oven to 350 degree Fahrenheit and line baking sheet with parchment paper."
+        },
+        {
+          "step": "2",
+          "stepImages": [],
+          "instruction": "In a large mixing bowl, combine the oats, nuts and/or seeds, salt and cinnamon. Stir to blend."
+        },
+        {
+          "step": "3",
+          "stepImages": [],
+          "instruction": "Pour in the oil, maple syrup and/or honey and vanilla. Mix well, until every oat and nut is lightly coated. Pour the granola onto your prepared pan and use a large spoon to spread it in an even layer."
+        },
+        {
+          "step": "4",
+          "stepImages": [],
+          "instruction": "Bake until lightly golden, about 21 to 24 minutes, stirring halfway (for extra-clumpy granola, press the stirred granola down with your spatula to create a more even layer). The granola will further crisp up as it cools."
+        },
+        {
+          "step": "5",
+          "stepImages": [],
+          "instruction": "Let the granola cool completely, undisturbed (at least 45 minutes). Top with the dried fruit (and optional chocolate chips, if using). Break the granola into pieces with your hands if you want to retain big chunks, or stir it around with a spoon if you don't want extra-clumpy granola."
+        },
+        {
+          "step": "6",
+          "stepImages": [],
+          "instruction": "Store the granola in an airtight container at room temperature for 1 to 2 weeks, or in a sealed freezer bag in the freezer for up to 3 months. The dried fruit can freeze solid, so let it warm to room temperature for 5 to 10 minutes before serving."
+        }
+      ],
+      "primaryImages": [],
+      "notes": "",
+      "isEnabled": true,
+      "titlePosition": "BL",
+      "boundRecipes": []
+    },
+    {
+      "name": "basic pancakes",
+      "alias": "basic-pancakes",
+      "description": "Basic, quick and easy pancakes. Simple recipe made with all-purpose flour, baking powder, sugar, oil, and a egg.",
+      "reference": "Martha Stewart",
+      "tags": ["Breakfast", "Brunch"],
+      "ingredients": [
+        {
+          "quantity": 1,
+          "volume": "cups",
+          "ingredient": "all-purpose flour",
+          "process": "spooned",
+          "extra": ""
+        },
+        {
+          "quantity": 2,
+          "volume": "tablespoons",
+          "ingredient": "sugar",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 2,
+          "volume": "teaspoons",
+          "ingredient": "baking powder",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 0.5,
+          "volume": "teaspoons",
+          "ingredient": "kosher salt",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 1,
+          "volume": "cups",
+          "ingredient": "milk",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 2,
+          "volume": "tablespoons",
+          "ingredient": "grapeseed oil",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 1,
+          "volume": "each",
+          "ingredient": "egg",
+          "process": "",
+          "extra": "large"
+        }
+      ],
+      "steps": [
+        {
+          "step": "1",
+          "stepImages": [],
+          "instruction": "Preheat oven to 200 degrees Fahrenheit"
+        },
+        {
+          "step": "2",
+          "stepImages": [],
+          "instruction": "Mix dry ingredients in small bowl"
+        },
+        {
+          "step": "3",
+          "stepImages": [],
+          "instruction": "Mix wet ingredients in larger bowl"
+        },
+        {
+          "step": "4",
+          "stepImages": [],
+          "instruction": "Add dry ingredients to the wet ingredients and mix to combine."
+        }
+      ],
+      "primaryImages": [],
+      "notes": "",
+      "isEnabled": true,
+      "titlePosition": "BL",
+      "boundRecipes": []
+    },
+    {
+      "name": "Refried Beans",
+      "alias": "refried-beans",
+      "description": "These refried beans are delicious and so easy to make. This refried bean recipe is quick, too—use canned beans and they're ready in 25 minutes! Plus, these beans are healthy, vegan and gluten free.",
+      "reference": "Cookie + Kate",
+      "tags": ["Side", "Vegetarian"],
+      "ingredients": [
+        {
+          "quantity": 1,
+          "volume": "tablespoons",
+          "ingredient": "Olive oil",
+          "process": "",
+          "extra": "Extra-virgin"
+        },
+        {
+          "quantity": 0.5,
+          "volume": "cups",
+          "ingredient": "Onion",
+          "process": "Finely chopped",
+          "extra": ""
+        },
+        {
+          "quantity": 0.25,
+          "volume": "teaspoons",
+          "ingredient": "Kosher salt",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 2,
+          "volume": "each",
+          "ingredient": "Garlic",
+          "process": "Minced",
+          "extra": ""
+        },
+        {
+          "quantity": 0.5,
+          "volume": "teaspoons",
+          "ingredient": "Chili powder",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 0.25,
+          "volume": "teaspoons",
+          "ingredient": "Cumin",
+          "process": "Grounded",
+          "extra": ""
+        },
+        {
+          "quantity": 30,
+          "volume": "ounces",
+          "ingredient": "Pinto beans",
+          "process": "Rinsed and drained",
+          "extra": "3 cups of cooked pinto beans"
+        },
+        {
+          "quantity": 0.5,
+          "volume": "cups",
+          "ingredient": "Water",
+          "process": "",
+          "extra": ""
+        },
+        {
+          "quantity": 2,
+          "volume": "tablespoons",
+          "ingredient": "Cilantro",
+          "process": "Chopped",
+          "extra": "Fresh"
+        },
+        {
+          "quantity": 1,
+          "volume": "tablespoons",
+          "ingredient": "Lime",
+          "process": "Juiced",
+          "extra": "To tasted"
+        }
+      ],
+      "steps": [
+        {
+          "step": "1",
+          "stepImages": [],
+          "instruction": "In a medium saucepan over medium heat, warm the olive oil until shimmering. Add the onions and salt. Cook, stirring occasionally, until the onions have softened and are turning translucent, about 5 to 8 minutes."
+        },
+        {
+          "step": "2",
+          "stepImages": [],
+          "instruction": "Add the garlic, chili powder and cumin. Cook, stirring constantly, until fragrant, about 30 seconds. Pour in the drained beans and water. Stir, cover and cook for 5 minutes."
+        },
+        {
+          "step": "3",
+          "stepImages": [],
+          "instruction": "Reduce the heat to low and remove the lid. Use a potato masher or the back of a fork to mash up about at least half of the beans, until you reach your desired consistency. Continue to cook the beans, uncovered, stirring often, for 3 more minutes."
+        },
+        {
+          "step": "4",
+          "stepImages": [],
+          "instruction": "Remove the saucepan from the heat and stir in the cilantro and lime juice. Taste, and add more salt and lime juice if necessary. If the beans seem dry, add a very small splash of water and stir to combine. Cover until you're ready to serve."
+        }
+      ],
+      "primaryImages": [],
+      "notes": "",
+      "isEnabled": true,
+      "titlePosition": "BL",
+      "boundRecipes": []
+    },
+    {
+      "name": "Sticky Toffee Pudding",
+      "alias": "toffee-pudding",
+      "description": "A classic British dessert is said to have been created in a pub in northwest England and is popular throughout Britain, Canada, Australia, and New Zealand. It boasts a moist, tender sponge cake sweetened with both brown sugar and finely chopped or pureed dates. The cake gets sandwiched between layers of buttery toffee sauce before it's returned to the oven, then generously topped with more on the plate. The finished pudding is served along with custard, whipped cream, or vanilla ice cream to complement the rich sauce.",
+      "reference": "Food & Wine",
+      "tags": ["Dessert"],
+      "ingredients": [
+        {
+            "quantity": 6,
+            "volume": "ounces",
+            "ingredient": "Dates",
+            "process": "Pitted",
+            "extra": "preferably Medjool"
+        },
+        {
+            "quantity": 0.75,
+            "volume": "cups",
+            "ingredient": "Water",
+            "process": "",
+            "extra": ""
+        },
+        {
+            "quantity": 0.75,
+            "volume": "cups",
+            "ingredient": "all-purpose flour",
+            "process": "",
+            "extra": "plus 2 tablespoons"
+        },
+        {
+            "quantity": 1,
+            "volume": "teaspoons",
+            "ingredient": "baking powder",
+            "process": "",
+            "extra": ""
+        },
+        {
+            "quantity": 0.25,
+            "volume": "teaspoons",
+            "ingredient": "baking soda",
+            "process": "",
+            "extra": ""
+        },
+        {
+            "quantity": 1,
+            "volume": "pinch",
+            "ingredient": "kosher salt",
+            "process": "",
+            "extra": ""
+        },
+        {
+            "quantity": 4,
+            "volume": "tablespoons",
+            "ingredient": "butter",
+            "process": "softened",
+            "extra": "unsalted"
+        },
+        {
+            "quantity": 0.75,
+            "volume": "cups",
+            "ingredient": "Light brown sugar",
+            "process": "",
+            "extra": "packed"
+        },
+        {
+            "quantity": 1,
+            "volume": "each",
+            "ingredient": "Egg",
+            "process": "",
+            "extra": "large"
+        },
+        {
+            "quantity": 0.5,
+            "volume": "teaspoons",
+            "ingredient": "vanilla extract",
+            "process": "",
+            "extra": ""
+        },
+        {
+            "quantity": 1,
+            "volume": "scoop",
+            "ingredient": "vanilla ice cream",
+            "process": "",
+            "extra": ""
+        }
+
+      ],
+      "steps": [
+        {
+            "step": "1",
+            "stepImages": [],
+            "instruction": "Preheat the oven to 350°F. Lightly butter six 4-ounce ramekins."
+        },
+        {
+            "step": "2",
+            "stepImages": [],
+            "instruction": "Simmer the dates in the water over moderately low heat until the water is nearly absorbed and the dates are soft, about 15 minutes."
+        },
+        {
+            "step": "3",
+            "stepImages": [],
+            "instruction": "Transfer the dates and any liquid to a food processor and puree until very smooth."
+        },
+        {
+            "step": "4",
+            "stepImages": [],
+            "instruction": "In a small bowl, whisk the flour with the baking powder, baking soda, and salt."
+        },
+        {
+            "step": "5",
+            "stepImages": [],
+            "instruction": "In a medium bowl, using an electric mixer, beat the butter with the brown sugar at medium speed until light and fluffy. Beat in the egg and vanilla,"
+        },
+        {
+            "step": "6",
+            "stepImages": [],
+            "instruction": "Add date puree and beat."
+        },
+        {
+            "step": "7",
+            "stepImages": [],
+            "instruction": "At low speed, beat in the dry ingredients."
+        },
+        {
+            "step": "8",
+            "stepImages": [],
+            "instruction": "Spoon the batter into the ramekins and smooth the tops."
+        },
+        {
+            "step": "9",
+            "stepImages": [],
+            "instruction": "Bake for 20 minutes, or until a toothpick inserted into the centers comes out clean. Remove cakes and let cool slightly. Remove from ramekins and fully cool on wire rack. Can be individually plastic wrapped and refrigerated."
+        },
+        {
+            "step": "10",
+            "stepImages": [],
+            "instruction": "Cut tops to level and slice in half horizontally. Add a tablespoon of caramel sauce to ramekin, then the bottom half of cake, another tablespoon of caramel sauce and top cake with another tablespoon of caramel sauce."
+        },
+        {
+            "step": "10",
+            "stepImages": [],
+            "instruction": "Bake at 350°F until caramel sauce starts to bubble around edges, 10 - 15 mins. Turn upside down on plate and serve with ice cream."
+        }
+      ],
+      "primaryImages": [],
+      "notes": "",
+      "isEnabled": true,
+      "titlePosition": "BL",
+      "boundRecipes": []
+    }
+  ]
+}

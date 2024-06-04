@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="470.73407"
+   height="470.73407"
+   viewBox="0 0 156.91136 156.91136"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486, 2022-12-01)"
+   sodipodi:docname="icon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     showguides="true"
+     inkscape:zoom="0.7180275"
+     inkscape:cx="162.25005"
+     inkscape:cy="285.50439"
+     inkscape:window-width="1390"
+     inkscape:window-height="956"
+     inkscape:window-x="2154"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient6642">
+      <stop
+         style="stop-color:#29553d;stop-opacity:1;"
+         offset="0"
+         id="stop6638" />
+      <stop
+         style="stop-color:#3099aa;stop-opacity:1"
+         offset="1"
+         id="stop6640" />
+    </linearGradient>
+    <rect
+       x="101.66742"
+       y="149.01936"
+       width="260.43571"
+       height="158.7683"
+       id="rect5689" />
+    <rect
+       x="116.98716"
+       y="307.78766"
+       width="225.6181"
+       height="96.096598"
+       id="rect5631" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6642"
+       id="radialGradient6644"
+       cx="52.504898"
+       cy="85.857552"
+       fx="52.504898"
+       fy="85.857552"
+       r="78.455681"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.31252,-0.15766206,0.1842245,1.5335846,-40.16426,-37.044131)" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-3.7138748,-4.6423416)"
+     style="display:inline">
+    <circle
+       style="fill:url(#radialGradient6644);fill-opacity:1;stroke-width:0.33333298;stroke-dasharray:none;stroke:#000000;stroke-opacity:1"
+       id="path242"
+       cx="82.169556"
+       cy="83.098022"
+       r="78.455681" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     style="display:inline">
+    <g
+       aria-label="IL"
+       id="text9082"
+       style="font-size:135.429px;fill:#ffffff;stroke-width:0.940477">
+      <path
+         d="M 52.786481,25.47019 V 127.58366 H 26.242397 V 25.47019 Z"
+         style="font-weight:bold;font-family:Futura;-inkscape-font-specification:'Futura, Bold'"
+         id="path9084" />
+      <path
+         d="m 100.7281,25.47019 v 79.63225 h 31.82582 v 22.48122 H 74.184017 V 25.47019 Z"
+         style="font-weight:bold;font-family:Futura;-inkscape-font-specification:'Futura, Bold'"
+         id="path9086" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:135.429px;display:none;fill:#ffffff;fill-opacity:1;stroke-width:0.940477"
+       x="15.543506"
+       y="127.58366"
+       id="text5747"
+       sodipodi:insensitive="true"><tspan
+         sodipodi:role="line"
+         id="tspan5745"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:135.429px;font-family:Futura;-inkscape-font-specification:'Futura, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.940477"
+         x="15.543506"
+         y="127.58366">IL</tspan></text>
+  </g>
+</svg>

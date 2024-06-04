@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .card-title-tl {
+        @apply top-10 left-2;
+    }
+
+    .card-title-tr {
+        @apply top-10 right-2;
+    }
+
+    .card-title-bl {
+        @apply bottom-10 left-2;
+    }
+
+    .card-title-br {
+        @apply bottom-10 right-2;
+    }
+}
