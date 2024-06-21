@@ -12,6 +12,7 @@
     "@popperjs/core": "^2.11.8",
     "@vue/compat": "^3.4.15",
     "@vue/compiler-sfc": "^3.4.15",
+    "aws-amplify": "^6.3.7",
     "firebase": "^10.12.0",
     "less": "^4.2.0",
     "lightningcss": "^1.24.0",
@@ -25,13 +26,20 @@
     "vuefire": "^3.1.23"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.0.3",
+    "@aws-amplify/backend-cli": "^1.0.4",
     "@types/node": "^20.11.6",
     "@vitejs/plugin-vue": "^4.5.2",
     "autoprefixer": "^10.4.19",
+    "aws-cdk": "^2.147.0",
+    "aws-cdk-lib": "^2.147.0",
+    "constructs": "^10.3.0",
+    "esbuild": "^0.21.5",
     "postcss": "^8.4.38",
     "sass": "^1.70.0",
     "tailwindcss": "^3.4.3",
-    "typescript": "^5.2.2",
+    "tsx": "^4.15.7",
+    "typescript": "^5.5.2",
     "vite": "^5.0.8",
     "vue-tsc": "^1.8.25"
   }

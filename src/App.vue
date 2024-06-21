@@ -2,6 +2,7 @@
 import { defineAsyncComponent } from 'vue'
 
 // components
+import Loader from "./components/LoadingSvg.vue"
 import Header from "./components/Header.vue"
 
 const AsyncHome = defineAsyncComponent(() =>
@@ -18,7 +19,7 @@ const AsyncHome = defineAsyncComponent(() =>
             <AsyncHome />
         </template>
         <template #fallback>
-            Loading...
+            <Loader />
         </template>
     </Suspense>
 </template>
