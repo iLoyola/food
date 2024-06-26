@@ -1,7 +1,7 @@
 import { ref, reactive, watchEffect } from 'vue'
 import { defineStore } from 'pinia'
 
-import { RecipeModel } from '../model/recipe.model'
+import { RecipeModel } from '../model/recipe.model.js'
 
 const dbUrl = import.meta.env.VITE_FIREBASE_DATABASE_URL
 const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET
