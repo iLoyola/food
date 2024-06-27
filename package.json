@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/plugin-transform-class-properties": "^7.24.7",
+    "@babel/plugin-transform-object-rest-spread": "^7.24.7",
     "@popperjs/core": "^2.11.8",
     "@vue/compat": "^3.4.15",
     "@vue/compiler-sfc": "^3.4.15",
@@ -44,6 +46,6 @@
     "typescript": "^5.5.2",
     "vite": "^5.0.8",
     "vite-plugin-checker": "^0.6.4",
-    "vue-tsc": "^1.8.25"
+    "vue-tsc": "^2.0.22"
   }
 }
