@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/food/*"
+  to = "https://food.iloyola.com/:splat"
+  status = 200
