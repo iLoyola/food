@@ -1,0 +1,44 @@
+{
+    "categories": [
+        {
+            "name": "Fruits and Vegetables",
+            "isEnabled": true
+        },
+        {
+            "name": "Dairy and Eggs",
+            "isEnabled": true
+        },
+        {
+            "name": "Bakery",
+            "isEnabled": true
+        },
+        {
+            "name": "Pantry",
+            "isEnabled": true
+        },
+        {
+            "name": "Seafood",
+            "isEnabled": true
+        },
+        {
+            "name": "Meats",
+            "isEnabled": true
+        },
+        {
+            "name": "Beverages",
+            "isEnabled": true
+        },
+        {
+            "name": "Snacks, Chips, and Candy",
+            "isEnabled": true
+        },
+        {
+            "name": "Home",
+            "isEnabled": true
+        },
+        {
+            "name": "Misc",
+            "isEnabled": true
+        }
+    ]
+}

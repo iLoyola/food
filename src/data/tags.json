@@ -1,8 +1,12 @@
-{"tags": [
-  {
-    "name": "beef",
-    "id": "0001"
-  },
-  {"name": "chicken",
-    "id": "0002"}
-]}
+{
+    "tags": [
+        {
+            "name": "beef",
+            "id": "0001"
+        },
+        {
+            "name": "chicken",
+            "id": "0002"
+        }
+    ]
+}

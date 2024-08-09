@@ -1,0 +1,28 @@
+{
+    "items": [
+        {
+            "product": "Oil Spray",
+            "category": {
+                "name": "Pantry",
+                "id": "-O2_X-aqo5dG3XaOqY_3",
+                "isEnabled": true
+            },
+            "brand": "",
+            "quantity": 1,
+            "marketplaces": [
+                {
+                    "name": "Fortinos",
+                    "id": "-O2_VrdJRk6vHJP-Pr6R",
+                    "isEnabled": true
+                },
+                {
+                    "name": "Costco",
+                    "id": "-O2_VrdLxtSf6ByjjFor",
+                    "isEnabled": true
+                }
+            ],
+            "comments": "Preferably the Avocado Oil Spray at Costco",
+            "isEnabled": true
+        }
+    ]
+}
