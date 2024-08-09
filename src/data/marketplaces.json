@@ -1,0 +1,24 @@
+{
+    "marketplaces": [
+        {
+            "name": "Fortinos",
+            "isEnabled": true
+        },
+        {
+            "name": "Costco",
+            "isEnabled": true
+        },
+        {
+            "name": "No Frills",
+            "isEnabled": true
+        },
+        {
+            "name": "Walmart",
+            "isEnabled": true
+        },
+        {
+            "name": "Rona",
+            "isEnabled": true
+        }
+    ]
+}
