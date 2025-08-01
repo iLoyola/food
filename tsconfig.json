@@ -7,7 +7,9 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "outDir": "dist/types",
-
+    "types": [
+        "vitest/globals"
+    ],
     "paths": {
         "@/*": [
             "./*"

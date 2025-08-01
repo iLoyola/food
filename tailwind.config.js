@@ -3,11 +3,22 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 export default {
-    content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+    content: [
+        './index.html',
+        './src/**/*.{vue,js,ts,jsx,tsx}',
+        './node_modules/flowbite/**/*.js'
+    ],
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+            },
+            spacing: {
+                '128': '32rem',
+                '144': '36rem',
+            },
+            borderRadius: {
+                '4xl': '2rem',
             }
         },
         colors: {
@@ -27,9 +38,24 @@ export default {
                 '900': '#264753',
                 '950': '#132b34',
             },
-
+            'damask': {
+                '100': '#f9f0eb',
+                '200': '#eed3c4',
+                '300': '#e2b69d',
+                '400': '#d69975',
+                '500': '#CB7D4F',
+                '600': '#b16334',
+                '700': '#8a4d29',
+                '800': '#62371d',
+                '900': '#3b2111',
+                '1000': '#140b06',
+            }
         }
     },
-    plugins: [],
+    darkMode: 'selector',
+    plugins: [
+        require('flowbite/plugin'),
+        require('@tailwindcss/forms'),
+    ],
 }
 
