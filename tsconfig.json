@@ -3,22 +3,28 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "resolveJsonModule": true,
-    "module": "NodeNext",
+    "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "outDir": "dist/types",
     "types": [
         "vitest/globals"
     ],
+    "baseUrl": ".",
     "paths": {
-        "@/*": [
-            "./*"
-        ]
+        "@/*": ["./src/*"],
+        "@/model/*": ["./src/model/*"],
+        "@/components/*": ["./src/components/*"],
+        "@/stores/*": ["./src/stores/*"],
+        "@/firebase/*": ["./src/firebase/*"],
+        "@/utils/*": ["./src/utils/*"]
     },
 
     /* Bundler mode */
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
+    "noEmit": true,
 
     /* Linting */
     "strict": true,
@@ -26,6 +32,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.ext", "src/pages/test.js"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
