@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue'
+import { ref, defineAsyncComponent, onErrorCaptured } from 'vue'
 
 // components
 import Loader from "./components/LoadingSvg.vue"
@@ -9,12 +9,19 @@ const AsyncHome = defineAsyncComponent(() =>
     import('./components/AsyncHome.vue')
 )
 
+const errMsg = ref<string>('')
+
+onErrorCaptured(e => {
+    errMsg.value = 'Oops!, ' + e
+    return true
+})
 
 </script>
 
 <template>
     <Header />
-    <Suspense>
+    <div v-if="errMsg">{{ errMsg }}</div>
+    <Suspense v-else>
         <template #default>
             <AsyncHome />
         </template>

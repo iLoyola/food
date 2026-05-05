@@ -17,7 +17,7 @@ export interface RecipeModel {
     steps: [
         {
             step: string,
-            stepImages: [],
+            stepImages: string[],
             instruction: string
         }
     ],

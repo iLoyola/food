@@ -22,7 +22,128 @@
                 }
             ],
             "comments": "Preferably the Avocado Oil Spray at Costco",
-            "isEnabled": true
+            "isEnabled": true,
+            "isNonessential": false
+        },
+        {
+            "product": "Apples",
+            "category": {
+                "name": "Fruits and Vegetables",
+                "id": "-O2_X-ap3bXv4p_fqEFj",
+                "isEnabled": true
+            },
+            "brand": "",
+            "quantity": 1,
+            "marketplaces": [
+                {
+                    "name": "Fortinos",
+                    "id": "-O2_VrdJRk6vHJP-Pr6R",
+                    "isEnabled": true
+                }
+            ],
+            "comments": "Either Gala or Granny Smith",
+            "isEnabled": true,
+            "isNonessential": true
+        },
+        {
+            "product": "Salmon",
+            "category": {
+                "name": "Seafood",
+                "id": "-O2_X-aqo5dG3XaOqY_4",
+                "isEnabled": true
+            },
+            "brand": "",
+            "quantity": 1,
+            "marketplaces": [
+                {
+                    "name": "Fortinos",
+                    "id": "-O2_VrdJRk6vHJP-Pr6R",
+                    "isEnabled": true
+                }
+            ],
+            "comments": "Skin on and portioned for 3 - 4",
+            "isEnabled": true,
+            "isNonessential": false
+        },
+        {
+            "product": "Glass Cleaner",
+            "category": {
+                "name": "Home",
+                "id": "-O2_X4V7nArRCyusqWlT",
+                "isEnabled": true
+            },
+            "brand": "",
+            "quantity": 1,
+            "marketplaces": [
+                {
+                    "name": "Walmart",
+                    "id": "-O2_VrdM0gRP82j2cbi3",
+                    "isEnabled": true
+                },
+                {
+                    "name": "Rona",
+                    "id": "-O2_VrdM0gRP82j2cbi4",
+                    "isEnabled": true
+                }
+            ],
+            "comments": "",
+            "isEnabled": true,
+            "isNonessential": false
+        },
+        {
+            "product": "Hammer",
+            "category": {
+                "name": "Home",
+                "id": "-O2_X4V7nArRCyusqWlT",
+                "isEnabled": true
+            },
+            "brand": "",
+            "quantity": 1,
+            "marketplaces": [
+                {
+                    "name": "Rona",
+                    "id": "-O2_VrdM0gRP82j2cbi4",
+                    "isEnabled": true
+                }
+            ],
+            "comments": "The big ones",
+            "isEnabled": true,
+            "isNonessential": true
+        },
+        {
+            "product": "Gatorade",
+            "category": {
+                "name": "Beverages",
+                "id": "-O2_X-arY35KpsTQWUNh",
+                "isEnabled": true
+            },
+            "brand": "",
+            "quantity": 1,
+            "marketplaces": [
+                {
+                    "name": "Walmart",
+                    "id": "-O2_VrdM0gRP82j2cbi3",
+                    "isEnabled": true
+                },
+                {
+                    "name": "Fortinos",
+                    "id": "-O2_VrdJRk6vHJP-Pr6R",
+                    "isEnabled": true
+                },
+                {
+                    "name": "Costco",
+                    "id": "-O2_VrdLxtSf6ByjjFor",
+                    "isEnabled": true
+                },
+                {
+                    "name": "No Frills",
+                    "id": "-O2_VrdLxtSf6ByjjFos",
+                    "isEnabled": true
+                }
+            ],
+            "comments": "",
+            "isEnabled": true,
+            "isNonessential": false
         }
     ]
 }
