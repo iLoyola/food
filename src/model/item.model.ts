@@ -1,12 +1,15 @@
+import { CategoryModel } from './category.model.js'
+import { MarketplaceModel } from './marketplace.model.js'
+
 export interface ItemModel {
     product: string,
     id?: string,
-    category: {},
+    category: CategoryModel,
     brand?: string,
     quantity?: number,
-    marketplaces: [],
+    marketplaces: MarketplaceModel[],
     comments?: string,
     isNonessential: boolean,
     isEnabled: boolean,
-    marketplacesIds: string[] // Assuming marketplacesIds is an array of strings
+    marketplacesIds: string[]
 }

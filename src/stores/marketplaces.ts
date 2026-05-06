@@ -1,9 +1,7 @@
 import { ref, reactive } from 'vue'
 import { defineStore } from 'pinia'
-
+import { supabase } from '../supabase/client.js'
 import { MarketplaceModel } from '../model/marketplace.model.js'
-
-const dbUrl = import.meta.env.VITE_FIREBASE_DATABASE_URL
 
 export const useMarketplacesStore = defineStore('marketplaces', () => {
     const loading = ref<boolean>(false)
@@ -13,20 +11,25 @@ export const useMarketplacesStore = defineStore('marketplaces', () => {
     async function fetchMarketplaces(): Promise<MarketplaceModel[]> {
         try {
             loading.value = true
-            let response = await fetch(`${dbUrl}/marketplaces.json`)
-            let responseData = await response.json()
+            const { data, error } = await supabase
+                .from('marketplaces')
+                .select('*')
+                .eq('is_enabled', true)
 
-            for (let key in responseData) {
-                if (responseData.hasOwnProperty(key)) {
-                    marketplaces.push({ ...responseData[key], id: key })
-                }
-            }
+            if (error) throw error
 
+            marketplaces.push(...data.map(m => ({
+                id: m.id,
+                name: m.name,
+                isEnabled: m.is_enabled
+            })))
         } catch (error) {
-            console.log(error)
+            console.error(error)
+        } finally {
+            loading.value = false
         }
-        loading.value = false
         return []
     }
+
     return { fetchMarketplaces, marketplaces, activeMarket }
 })

@@ -22,25 +22,15 @@ const appStore = useAppStore()
 const newItem = reactive<ItemModel>({
     product: '',
     id: '',
-    category: {},
+    category: { name: '', id: '', isEnabled: true },
     brand: '',
     quantity: 0,
     marketplaces: [],
-    comments: "",
+    comments: '',
     isNonessential: false,
     isEnabled: true,
     marketplacesIds: []
 })
-
-// Add Marketplace type
-type Marketplace = {
-    id: string;
-    name: string;
-    nonessential?: boolean;
-};
-
-// Update ItemModel to include marketplaces: Marketplace[]
-// If you cannot update ItemModel directly, use type assertion below
 
 const clonedItems = reactive<ItemModel[]>([])
 
@@ -113,12 +103,7 @@ const validateField = (field: string): void => {
 }
 
 const constructMarketplaces = (): void => {
-    const items: ItemModel[] = itemsStore.items
-    items.forEach((item) => {
-        // Fix: assert type for marketplaces
-        (item.marketplaces as Marketplace[]).forEach(mp => item.marketplacesIds.push(String(mp.id)))
-        clonedItems.push(item)
-    })
+    clonedItems.push(...itemsStore.items)
 }
 
 const isProductValid = computed((): boolean => appStore.basketProduct.product.trim() !== '' || false)
@@ -146,10 +131,9 @@ onMounted(() => {
                     <button @click.stop="listItemClick($event, item)" type="button" :aria-current="true" class="block w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white text-left">
                         <strong>{{ item.product }}</strong> -
                         <!-- Type assertion for marketplaces -->
-                        <small v-for="(mp, index) in (item.marketplaces as Marketplace[])">
+                        <small v-for="(mp, index) in item.marketplaces">
                             {{ mp.name }}
                             <span v-if="index + 1 < item.marketplaces.length">, </span>
-                            <span v-if="mp.nonessential" class="text-blue-500 dark:text-blue-300">&ensp;(Nonessential)</span>
                         </small>
                     </button>
                 </li>

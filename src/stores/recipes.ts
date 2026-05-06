@@ -3,8 +3,7 @@ import { defineStore } from 'pinia'
 import { RecipeModel } from '../model/recipe.model.js'
 import { getRecipes } from '../services/recipes.service.js'
 
-const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET
-const storageBucketUrl = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET_URL
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 
 type State = {
     recipes: RecipeModel[],
@@ -51,7 +50,7 @@ export const useRecipesStore = defineStore('recipes', {
             recipes.forEach((recipe: RecipeModel) => {
                 recipe.primaryImages = []
                 imageSizes.forEach((imageSize: string) => {
-                    let imgUrl = `${storageBucketUrl}/v0/b/${storageBucket}/o/recipes%2F${recipe.alias}_${imageSize}.jpg?alt=media`
+                    let imgUrl = `${supabaseUrl}/storage/v1/object/public/recipes/${recipe.alias}_${imageSize}.jpg`
                     recipe.primaryImages.push(imgUrl)
                 })
             })

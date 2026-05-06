@@ -5,6 +5,10 @@ import { ref, defineAsyncComponent, onErrorCaptured } from 'vue'
 import Loader from "./components/LoadingSvg.vue"
 import Header from "./components/Header.vue"
 
+// auth
+import { useAuthStore } from './stores/auth.js'
+useAuthStore().init()
+
 const AsyncHome = defineAsyncComponent(() =>
     import('./components/AsyncHome.vue')
 )

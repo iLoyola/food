@@ -16,7 +16,6 @@
         "@/model/*": ["./src/model/*"],
         "@/components/*": ["./src/components/*"],
         "@/stores/*": ["./src/stores/*"],
-        "@/firebase/*": ["./src/firebase/*"],
         "@/utils/*": ["./src/utils/*"]
     },
 

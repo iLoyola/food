@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { supabase } from '../supabase/client.js'
 
 import Home from '../pages/Home.vue'
 import Register from '../pages/Register.vue'
@@ -23,9 +24,8 @@ const router = createRouter({
                     component: Register,
                     name: 'register',
                     meta: {
-                        breadcrumb: 'Register'
+                        breadcrumb: 'Sign In'
                     }
-
                 },
                 {
                     path: '/recipes',
@@ -42,12 +42,6 @@ const router = createRouter({
                             meta: {
                                 breadcrumb: 'Recipe'
                             },
-                            // beforeEnter: (to, _from, next) => {
-                            //     console.log({to})
-
-                            //     // meta.breadcrumb[1].title = `Recipe | ${to.params}`
-                            //     next()
-                            // }
                         },
                     ]
                 },
@@ -69,19 +63,19 @@ const router = createRouter({
                 },
             ]
         },
-
     ]
 })
 
-router.beforeEach((to, from, next) => {
-    if (to.name === 'home') {
-        next()
-        return
-    } else if (!from.name) {
-        next({ name: 'home' })
-    } else {
-        next()
+router.beforeEach(async (to, _from, next) => {
+    const { data: { session } } = await supabase.auth.getSession()
+    const isAuthenticated = !!session
+
+    if (to.name === 'register') {
+        // Redirect already-authenticated users away from the sign-in page
+        return isAuthenticated ? next({ name: 'home' }) : next()
     }
+
+    isAuthenticated ? next() : next({ name: 'register' })
 })
 
 export default router

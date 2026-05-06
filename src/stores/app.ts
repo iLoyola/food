@@ -1,23 +1,23 @@
 import { ref, reactive } from 'vue'
 import { defineStore } from 'pinia'
-
+import { ItemModel } from '../model/item.model.js'
 
 export const useAppStore = defineStore('app', {
     state: () => {
         return {
             atHome: ref<boolean>(true),
             isNew: ref<boolean>(true),
-            basketProduct: reactive({
+            basketProduct: reactive<ItemModel>({
                 product: '',
                 id: '',
-                category: {},
+                category: { name: '', id: '', isEnabled: true },
                 brand: '',
                 quantity: 0,
                 marketplaces: [],
-                comments: "",
+                comments: '',
                 isNonessential: false,
                 isEnabled: true,
-                marketplacesIds: [] as string[],
+                marketplacesIds: [],
             })
         }
     }
