@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 
 const defaultTheme = require('tailwindcss/defaultTheme')
+const colors = require('tailwindcss/colors')
 
 export default {
     content: [
         './index.html',
         './src/**/*.{vue,js,ts,jsx,tsx}',
-        './node_modules/flowbite/**/*.js'
     ],
     theme: {
         extend: {
@@ -24,7 +24,13 @@ export default {
         colors: {
             transparent: 'transparent',
             current: 'currentColor',
+            black: '#000000',
             white: '#ffffff',
+            gray: colors.gray,
+            slate: colors.slate,
+            red: colors.red,
+            green: colors.green,
+            blue: colors.blue,
             'firefly': {
                 '50': '#f0fbfb',
                 '100': '#d9f2f4',
@@ -54,8 +60,6 @@ export default {
     },
     darkMode: 'selector',
     plugins: [
-        require('flowbite/plugin'),
         require('@tailwindcss/forms'),
     ],
 }
-

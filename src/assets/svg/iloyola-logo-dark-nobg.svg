@@ -1,0 +1,17 @@
+<svg viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#3099aa"/>
+      <stop offset="100%" stop-color="#29553d"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="4" width="72" height="72" rx="16" fill="url(#g)"/>
+  <text x="36" y="55" text-anchor="middle" fill="white"
+    font-family="'Helvetica Neue','Helvetica',Arial,sans-serif"
+    font-size="42" font-weight="300" letter-spacing="-2">iL</text>
+  <text x="90" y="57"
+    font-family="'Helvetica Neue','Helvetica',Arial,sans-serif"
+    font-size="46" font-weight="300" letter-spacing="-1">
+    <tspan fill="#4ec5d6">i</tspan><tspan fill="white">Loyola</tspan>
+  </text>
+</svg>

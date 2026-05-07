@@ -1,36 +1,34 @@
 <script setup lang="ts">
-import { ref, defineAsyncComponent, onErrorCaptured } from 'vue'
-
-// components
-import Loader from "./components/LoadingSvg.vue"
-import Header from "./components/Header.vue"
-
-// auth
+import { onMounted } from 'vue'
+import Header from './components/Header.vue'
+import BottomNav from './components/BottomNav.vue'
 import { useAuthStore } from './stores/auth.js'
-useAuthStore().init()
+import { useRecipesStore } from './stores/recipes.js'
+import { useItemsStore } from './stores/items.js'
+import { useMarketplacesStore } from './stores/marketplaces.js'
 
-const AsyncHome = defineAsyncComponent(() =>
-    import('./components/AsyncHome.vue')
-)
+const authStore = useAuthStore()
+authStore.init()
 
-const errMsg = ref<string>('')
+const recipesStore = useRecipesStore()
+const itemsStore = useItemsStore()
+const marketplacesStore = useMarketplacesStore()
 
-onErrorCaptured(e => {
-    errMsg.value = 'Oops!, ' + e
-    return true
+onMounted(async () => {
+    await Promise.all([
+        recipesStore.fetchRecipes(),
+        itemsStore.fetchItems(),
+        marketplacesStore.fetchMarketplaces(),
+    ])
 })
-
 </script>
 
 <template>
-    <Header />
-    <div v-if="errMsg">{{ errMsg }}</div>
-    <Suspense v-else>
-        <template #default>
-            <AsyncHome />
-        </template>
-        <template #fallback>
-            <Loader />
-        </template>
-    </Suspense>
+    <div class="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
+        <Header />
+        <main class="flex-1 pb-20">
+            <router-view />
+        </main>
+        <BottomNav v-if="authStore.user" />
+    </div>
 </template>

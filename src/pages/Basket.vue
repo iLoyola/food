@@ -1,204 +1,430 @@
 <script setup lang="ts">
-
-import { ref, reactive, computed, onMounted } from 'vue'
-
-// stores
+import { ref, reactive, computed } from 'vue'
 import { useItemsStore } from '../stores/items.js'
 import { useMarketplacesStore } from '../stores/marketplaces.js'
-import { useAppStore } from '../stores/app.js'
-
-// model
 import { ItemModel } from '../model/item.model.js'
-import { ErrorsModel } from '../model/basket-errors.model.js'
-
-// component
-import FullAlerts from '../components/FullAlerts.vue'
-import ProductInput from '../components/ProductInput.vue'
+import grocerySuggestions from '../data/grocery-suggestions.json'
 
 const itemsStore = useItemsStore()
 const marketplacesStore = useMarketplacesStore()
-const appStore = useAppStore()
 
-const newItem = reactive<ItemModel>({
-    product: '',
-    id: '',
-    category: { name: '', id: '', isEnabled: true },
-    brand: '',
-    quantity: 0,
-    marketplaces: [],
-    comments: '',
-    isNonessential: false,
-    isEnabled: true,
-    marketplacesIds: []
-})
+// --- Form state ---
 
-const clonedItems = reactive<ItemModel[]>([])
-
-const errorsInterface: ErrorsModel = reactive({
-    product: '',
-    quantity: '',
-    marketplaces: ''
-})
-
-let errors = reactive({ ...errorsInterface })
-
-const alertType = ref('')
-const alertText = ref('')
-
-const submitForm = (): void => {
-    errors = reactive(JSON.parse(JSON.stringify(errorsInterface)))
-    validateField('product')
-    validateField('quantity')
-    validateField('marketplaces')
-    console.log('submit product ', errors.product)
-
-    if (Object.values(errors).every(field => field !== '')) {
-        // push to api
-        // get items
-        clonedItems.unshift({
-            ...appStore.basketProduct,
-            marketplaces: [], // Ensure correct type for marketplaces
-            marketplacesIds: [] // Ensure correct type for marketplacesIds
-        })
-        resetForm
-    } else {
-        console.log('fail');
-
+function emptyForm() {
+    return {
+        id: undefined as string | undefined,
+        product: '',
+        quantity: 1,
+        brand: '',
+        comments: '',
+        isNonessential: false,
+        marketplacesIds: [] as string[],
+        category: { id: '', name: '', isEnabled: true },
+        marketplaces: [] as ItemModel['marketplaces'],
+        isEnabled: true,
     }
 }
 
-const listItemClick = (_e: MouseEvent, item: any) => {
-    // If you need the button element:
-    // const button = e.currentTarget as HTMLButtonElement;
-    appStore.basketProduct = item
-    appStore.isNew = false
+const form = reactive(emptyForm())
+const isEditing = ref(false)
+const saving = ref(false)
+const alert = reactive({ type: '', text: '' })
+const errors = reactive({ product: '', quantity: '', marketplaces: '' })
+
+// --- Autocomplete ---
+
+const showSuggestions = ref(false)
+
+const localSuggestions = computed(() => {
+    const q = form.product.trim().toLowerCase()
+    if (q.length < 2) return []
+    return itemsStore.items
+        .filter(item => item.product.toLowerCase().includes(q))
+        .slice(0, 5)
+})
+
+const catalogSuggestions = computed(() => {
+    const q = form.product.trim().toLowerCase()
+    if (q.length < 2) return []
+    const localNames = new Set(itemsStore.items.map(i => i.product.toLowerCase()))
+    return grocerySuggestions
+        .filter(s => s.name.toLowerCase().includes(q) && !localNames.has(s.name.toLowerCase()))
+        .slice(0, 5)
+})
+
+const hasSuggestions = computed(() =>
+    localSuggestions.value.length > 0 || catalogSuggestions.value.length > 0
+)
+
+function onProductInput() {
+    showSuggestions.value = true
+    isEditing.value = false
+    form.id = undefined
 }
 
-const resetForm = (): void => {
-    appStore.basketProduct = reactive({
-        ...newItem,
-        id: '', // ensure string, not undefined
-        brand: '', // ensure string, not undefined
-        quantity: 0, // ensure number, not undefined
-        comments: '', // ensure string, not undefined
-        marketplaces: [],
-        marketplacesIds: [],
+function onProductBlur() {
+    setTimeout(() => { showSuggestions.value = false }, 150)
+}
+
+function selectSuggestion(item: ItemModel) {
+    loadItem(item)
+    showSuggestions.value = false
+}
+
+// --- Item list ---
+
+const sortedItems = computed(() =>
+    [...itemsStore.items].sort((a, b) => a.product.localeCompare(b.product))
+)
+
+const sortedMarketplaces = computed(() =>
+    [...marketplacesStore.marketplaces].sort((a, b) => a.name.localeCompare(b.name))
+)
+
+function loadItem(item: ItemModel) {
+    Object.assign(form, {
+        id: item.id,
+        product: item.product,
+        quantity: item.quantity ?? 1,
+        brand: item.brand ?? '',
+        comments: item.comments ?? '',
+        isNonessential: item.isNonessential,
+        marketplacesIds: [...item.marketplacesIds],
+        category: { ...item.category },
+        marketplaces: [...item.marketplaces],
+        isEnabled: item.isEnabled,
     })
-    errors = reactive({ ...errorsInterface })
+    isEditing.value = true
+    errors.product = ''
+    errors.quantity = ''
+    errors.marketplaces = ''
+    alert.type = ''
+    alert.text = ''
+    document.getElementById('basket-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-const validateField = (field: string): void => {
-    // errors[field] = ''
-    if (field === 'product' && !isProductValid) {
-        errors.product = 'A product is required'
-    }
-    if (field === 'quantity' && !isQuantityValid) {
-        console.log('quantity');
+// --- Marketplace toggle ---
 
-        errors.quantity = 'Quantity is required'
-    }
-    if (field === 'marketplaces' && !isMarketplacesValid) {
-        errors.marketplaces = 'Marketplace(s) required'
+function toggleMarketplace(id: string) {
+    const idx = form.marketplacesIds.indexOf(id)
+    if (idx === -1) form.marketplacesIds.push(id)
+    else form.marketplacesIds.splice(idx, 1)
+}
+
+// --- Quantity stepper ---
+
+function incrementQty() { form.quantity = (form.quantity ?? 0) + 1 }
+function decrementQty() { form.quantity = Math.max(0, (form.quantity ?? 0) - 1) }
+
+// --- Validation & submit ---
+
+function validate(): boolean {
+    errors.product = form.product.trim() ? '' : 'Product name is required'
+    errors.quantity = (form.quantity ?? 0) > 0 ? '' : 'Quantity must be at least 1'
+    errors.marketplaces = form.marketplacesIds.length > 0 ? '' : 'Select at least one marketplace'
+    return !errors.product && !errors.quantity && !errors.marketplaces
+}
+
+async function submitForm() {
+    if (!validate()) return
+    saving.value = true
+    alert.type = ''
+    alert.text = ''
+    try {
+        const payload: ItemModel = {
+            id: form.id,
+            product: form.product,
+            quantity: form.quantity,
+            brand: form.brand,
+            comments: form.comments,
+            isNonessential: form.isNonessential,
+            marketplacesIds: form.marketplacesIds,
+            category: form.category,
+            marketplaces: form.marketplaces,
+            isEnabled: form.isEnabled,
+        }
+        if (isEditing.value && form.id) {
+            await itemsStore.updateItem(payload)
+            alert.type = 'success'
+            alert.text = `${form.product} updated.`
+        } else {
+            await itemsStore.addItem(payload)
+            alert.type = 'success'
+            alert.text = `${form.product} added to the list.`
+        }
+        resetForm()
+    } catch {
+        alert.type = 'error'
+        alert.text = 'Something went wrong. Please try again.'
+    } finally {
+        saving.value = false
     }
 }
 
-const constructMarketplaces = (): void => {
-    clonedItems.push(...itemsStore.items)
+function resetForm() {
+    Object.assign(form, emptyForm())
+    isEditing.value = false
+    errors.product = ''
+    errors.quantity = ''
+    errors.marketplaces = ''
 }
-
-const isProductValid = computed((): boolean => appStore.basketProduct.product.trim() !== '' || false)
-const isQuantityValid = computed((): boolean => appStore.basketProduct.quantity !== 0 || false)
-const isMarketplacesValid = computed((): boolean => appStore.basketProduct.marketplacesIds?.length > 0 || false)
-
-onMounted(() => {
-    constructMarketplaces()
-})
-
 </script>
 
 <template>
-    <div class="full-alerts">
-        <full-alerts :alertType="alertType" :alertText="alertText"></full-alerts>
-    </div>
-    <div class="heading w-full mb-1">
-        <h1 class="text-5xl font-extrabold dark:text-white m-4">Basket</h1>
-    </div>
-    <div class="@3xl:flex flex-wrap mt-10 gap-4">
-        <div class="basis-0 grow">
-            <h2 class="text-4xl font-bold dark:text-white mb-4">List</h2>
-            <ul class="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <li v-for="(item, index) in clonedItems" :class="{ 'rounded-t-lg': index === 0, 'rounded-b-lg': index + 1 === clonedItems.length }">
-                    <button @click.stop="listItemClick($event, item)" type="button" :aria-current="true" class="block w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white text-left">
-                        <strong>{{ item.product }}</strong> -
-                        <!-- Type assertion for marketplaces -->
-                        <small v-for="(mp, index) in item.marketplaces">
-                            {{ mp.name }}
-                            <span v-if="index + 1 < item.marketplaces.length">, </span>
-                        </small>
-                    </button>
-                </li>
-            </ul>
+    <div class="max-w-3xl mx-auto px-4 pt-4 pb-6">
+
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Gather</h1>
+
+        <!-- Item list -->
+        <h2 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2 px-1">
+            Items ({{ itemsStore.items.length }})
+        </h2>
+
+        <div class="rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800 mb-6">
+            <div
+                v-if="itemsStore.loading"
+                class="px-4 py-6 text-center text-sm text-gray-400"
+            >
+                Loading…
+            </div>
+            <div
+                v-else-if="itemsStore.items.length === 0"
+                class="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-500"
+            >
+                No items yet. Add one below.
+            </div>
+            <button
+                v-for="item in sortedItems"
+                :key="item.id"
+                type="button"
+                @click="loadItem(item)"
+                :class="form.id === item.id
+                    ? 'bg-firefly-50 dark:bg-firefly-800'
+                    : 'hover:bg-gray-50 dark:hover:bg-firefly-800'"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors"
+            >
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ item.product }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 truncate">
+                        {{ item.marketplaces.map(m => m.name).join(', ') || 'No marketplaces' }}
+                    </p>
+                </div>
+                <span
+                    v-if="item.isNonessential"
+                    class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-damask-100 text-damask-700"
+                >
+                    Nice-to-have
+                </span>
+                <svg class="shrink-0 w-4 h-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
         </div>
-        <div class="basis-0 grow @3xl:mt-8">
-            <form class="@3xl:max-w-sm mx-auto">
-                <fieldset>
-                    <legend class="text-4xl font-bold dark:text-white mb-4">Add new item to basket</legend>
-                    <product-input :newItem="newItem" :clonedItems="clonedItems" :errors="errors" />
-                    <div class="mb-4">
-                        <label for="quantity" class="flex justify-between mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            <span>Quantity</span>
-                            <small>*required</small>
-                        </label>
-                        <input v-model="appStore.basketProduct.quantity" type="number" min="0" name="quantity" id="quantity" class="fbg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <div v-if="errors.quantity" class="mt-2 text-sm text-red-600 dark:text-red-400">
-                            {{ errors.quantity }}
+
+        <!-- Form -->
+        <div id="basket-form" class="bg-white dark:bg-firefly-900 rounded-2xl p-5">
+
+            <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-4">
+                {{ isEditing ? `Editing: ${form.product}` : 'Add new item' }}
+            </h2>
+
+            <!-- Alert -->
+            <div
+                v-if="alert.text"
+                :class="alert.type === 'success'
+                    ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400'"
+                class="rounded-xl px-4 py-3 text-sm mb-4"
+            >
+                {{ alert.text }}
+            </div>
+
+            <!-- Product -->
+            <div class="mb-4 relative">
+                <label for="product" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Product <span class="text-red-500">*</span>
+                </label>
+                <input
+                    id="product"
+                    v-model="form.product"
+                    @input="onProductInput"
+                    @blur="onProductBlur"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="e.g. Whole Milk"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    :class="errors.product ? 'border-red-400 focus:ring-red-300' : ''"
+                />
+                <!-- Suggestions dropdown -->
+                <div
+                    v-if="showSuggestions && hasSuggestions"
+                    class="absolute z-20 left-0 right-0 mt-1 bg-white dark:bg-firefly-800 rounded-xl shadow-lg border border-gray-100 dark:border-firefly-700 overflow-hidden"
+                >
+                    <!-- Your list -->
+                    <template v-if="localSuggestions.length > 0">
+                        <div class="px-3 pt-2 pb-1">
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Your list</span>
                         </div>
-                    </div>
-                    <div class="mb-4">
-                        <h3 class="flex justify-between dark:text-white">
-                            <span>Marketplaces</span>
-                            <small>*required</small>
-                        </h3>
-                        <div class="flex justify-between flex-wrap">
-                            <div v-for="mp in marketplacesStore.marketplaces">
-                                <input v-model="appStore.basketProduct.marketplacesIds" type="checkbox" :name="mp.name" :value="mp.id" :id="mp.id" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label :for="mp.id" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ mp.name }}</label>
-                            </div>
-                        </div>
-                        <div v-if="errors.marketplaces" class="mt-2 text-sm text-red-600 dark:text-red-400">
-                            {{ errors.marketplaces }}
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Preferred Brand
-                        </label>
-                        <input v-model="appStore.basketProduct.brand" type="text" name="brand" id="brand" class="fbg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    </div>
-                    <div class="mb-4">
-                        <label for="comments" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Extras
-                        </label>
-                        <textarea v-model="appStore.basketProduct.comments" type="textarea" name="comments" id="comments" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
-                    </div>
-                    <div class="flex items-center mb-4">
-                        <input id="nonessential" type="checkbox" v-model="appStore.basketProduct.isNonessential" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="nonessential" class="block ml-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Nonessential unless on sale.
-                        </label>
-                    </div>
-                    <div class="mb-4">
-                        <button @click="submitForm" type="button" class="w-full text-white bg-damask-700 hover:bg-damask-700 focus:ring-4 focus:ring-damask-200 font-medium rounded-lg text-md px-5 py-2.5 me-2 mb-2 dark:bg-damask-700 dark:hover:bg-damask-500 focus:outline-none dark:focus:ring-damask-900 text-center inline-flex items-center justify-center">
-                            <svg id="icon-plus" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3.5 h-3.5 me-2">
-                                <path d="M5 13h6v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-6h6c0.552 0 1-0.448 1-1s-0.448-1-1-1h-6v-6c0-0.552-0.448-1-1-1s-1 0.448-1 1v6h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1z"></path>
-                            </svg>
-                            <span v-if="appStore.isNew">Add</span>
-                            <span v-else>Update</span>
+                        <button
+                            v-for="s in localSuggestions"
+                            :key="s.id"
+                            type="button"
+                            @mousedown.prevent="selectSuggestion(s)"
+                            class="w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-firefly-700 transition-colors"
+                        >
+                            <span class="flex-1 text-sm font-medium text-gray-900 dark:text-white">{{ s.product }}</span>
+                            <span class="text-xs text-gray-400 dark:text-gray-500 truncate max-w-[140px]">
+                                {{ s.marketplaces.map(m => m.name).join(', ') }}
+                            </span>
                         </button>
-                    </div>
-                </fieldset>
-            </form>
+                    </template>
+
+                    <!-- Catalog -->
+                    <template v-if="catalogSuggestions.length > 0">
+                        <div class="px-3 pt-2 pb-1" :class="localSuggestions.length > 0 ? 'border-t border-gray-100 dark:border-firefly-700' : ''">
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Catalog</span>
+                        </div>
+                        <button
+                            v-for="s in catalogSuggestions"
+                            :key="s.name"
+                            type="button"
+                            @mousedown.prevent="form.product = s.name; showSuggestions = false"
+                            class="w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-firefly-700 transition-colors"
+                        >
+                            <span class="flex-1 text-sm text-gray-700 dark:text-gray-300">{{ s.name }}</span>
+                            <span class="text-xs text-gray-400 dark:text-gray-500">{{ s.category }}</span>
+                        </button>
+                    </template>
+                </div>
+                <p v-if="errors.product" class="mt-1.5 text-xs text-red-500">{{ errors.product }}</p>
+            </div>
+
+            <!-- Quantity -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Quantity <span class="text-red-500">*</span>
+                </label>
+                <div class="flex items-center gap-3">
+                    <button
+                        type="button"
+                        @click="decrementQty"
+                        class="w-9 h-9 rounded-full bg-gray-100 dark:bg-firefly-800 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-firefly-700 transition-colors"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+                        </svg>
+                    </button>
+                    <input
+                        v-model.number="form.quantity"
+                        type="number"
+                        min="0"
+                        class="w-16 text-center rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    />
+                    <button
+                        type="button"
+                        @click="incrementQty"
+                        class="w-9 h-9 rounded-full bg-gray-100 dark:bg-firefly-800 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-firefly-700 transition-colors"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
+                </div>
+                <p v-if="errors.quantity" class="mt-1.5 text-xs text-red-500">{{ errors.quantity }}</p>
+            </div>
+
+            <!-- Marketplaces -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Marketplaces <span class="text-red-500">*</span>
+                </label>
+                <div class="flex flex-wrap gap-2">
+                    <button
+                        v-for="mp in sortedMarketplaces"
+                        :key="mp.id"
+                        type="button"
+                        @click="toggleMarketplace(mp.id)"
+                        :class="form.marketplacesIds.includes(mp.id)
+                            ? 'bg-firefly-500 text-white border-firefly-500'
+                            : 'bg-white dark:bg-firefly-950 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-firefly-700'"
+                        class="px-4 py-1.5 rounded-full text-sm font-medium border transition-colors"
+                    >
+                        {{ mp.name }}
+                    </button>
+                </div>
+                <p v-if="errors.marketplaces" class="mt-1.5 text-xs text-red-500">{{ errors.marketplaces }}</p>
+            </div>
+
+            <!-- Brand -->
+            <div class="mb-4">
+                <label for="brand" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Preferred brand
+                </label>
+                <input
+                    id="brand"
+                    v-model="form.brand"
+                    type="text"
+                    placeholder="e.g. Organic Valley"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                />
+            </div>
+
+            <!-- Extras -->
+            <div class="mb-4">
+                <label for="comments" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Notes
+                </label>
+                <input
+                    id="comments"
+                    v-model="form.comments"
+                    type="text"
+                    placeholder="e.g. 2% or higher"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                />
+            </div>
+
+            <!-- Non-essential toggle -->
+            <div class="mb-6 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Nice-to-have</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500">Only buy if on sale or budget allows</p>
+                </div>
+                <button
+                    type="button"
+                    role="switch"
+                    :aria-checked="form.isNonessential"
+                    @click="form.isNonessential = !form.isNonessential"
+                    :class="form.isNonessential ? 'bg-firefly-500' : 'bg-gray-200 dark:bg-firefly-700'"
+                    class="relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-firefly-400 focus:ring-offset-2"
+                >
+                    <span
+                        :class="form.isNonessential ? 'translate-x-5' : 'translate-x-0.5'"
+                        class="inline-block h-5 w-5 mt-0.5 rounded-full bg-white shadow transform transition-transform"
+                    />
+                </button>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+                <button
+                    v-if="isEditing"
+                    type="button"
+                    @click="resetForm"
+                    class="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-firefly-700 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-firefly-800 transition-colors"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    @click="submitForm"
+                    :disabled="saving"
+                    class="flex-1 py-2.5 rounded-xl bg-damask-500 hover:bg-damask-600 text-white text-sm font-medium transition-colors disabled:opacity-50"
+                >
+                    <span v-if="saving">Saving…</span>
+                    <span v-else-if="isEditing">Update item</span>
+                    <span v-else>Add item</span>
+                </button>
+            </div>
         </div>
     </div>
 </template>
-

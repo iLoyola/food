@@ -1,137 +1,158 @@
 <script setup lang="ts">
-
-import { computed } from 'vue'
-
-// stores
+import { computed, ref } from 'vue'
 import { useItemsStore } from '../stores/items.js'
 import { useMarketplacesStore } from '../stores/marketplaces.js'
 
 const marketplacesStore = useMarketplacesStore()
 const itemsStore = useItemsStore()
 
-const sortedMarketplaces = computed(() =>  {
-    return marketplacesStore.marketplaces.sort((a, b) => a.name.localeCompare(b.name))
+const checked = ref<Set<string>>(new Set())
+
+const sortedMarketplaces = computed(() =>
+    [...marketplacesStore.marketplaces].sort((a, b) => a.name.localeCompare(b.name))
+)
+
+const filteredItems = computed(() => {
+    if (marketplacesStore.activeMarket === 'all') return itemsStore.items
+    return itemsStore.items.filter(item =>
+        item.marketplaces.some(mp => mp.name === marketplacesStore.activeMarket)
+    )
 })
 
-const isActiveMarketplace = computed(() => {
-    return marketplacesStore.activeMarket === 'all' ? false : true
-})
+const uncheckedItems = computed(() =>
+    filteredItems.value.filter(item => !checked.value.has(item.id!))
+)
 
-const isMarketplaceDisabled = computed(() => {
-    return false
-})
+const checkedItems = computed(() =>
+    filteredItems.value.filter(item => checked.value.has(item.id!))
+)
 
-const itemsByMarketplaces = computed(() => {
-    if (marketplacesStore.activeMarket === 'all') {
-        return itemsStore.items
-    } else {
-        const marketplaceItems: any[] = []
-        itemsStore.items.forEach((item) => {
-            if (item.marketplaces.find((marketplace: any) => marketplace.name === marketplacesStore.activeMarket)) {
-                marketplaceItems.push(item)
-            }
-        })
-        return marketplaceItems
-    }
-})
-
-const marketShoppingCompleted = () => {
-    console.log('market Shopping Completed');
+function toggle(id: string) {
+    const next = new Set(checked.value)
+    next.has(id) ? next.delete(id) : next.add(id)
+    checked.value = next
 }
 
+function clearChecked() {
+    checked.value = new Set()
+}
 </script>
 
 <template>
-    <div class="heading w-full mb-1">
-        <h1 class="text-5xl font-extrabold dark:text-white m-4">Shopping</h1>
-    </div>
-    <div class="w-full bg-white dark:bg-gray-700 shadow-md rounded-lg pb-8 pt-4 mb-4">
-        <form class="mx-auto">
-            <div class="w-full px-3 mb-6 md:mb-5.5">
-                <label class="block mb-2 text-lg font-medium text-firefly-800 dark:text-white" for="marketplace">
-                    By Marketplace
-                </label>
-                <div class="relative">
-                    <select v-model="marketplacesStore.activeMarket" id="marketplace" name="marketplace"
-                        class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option value="all">All</option>
-                        <option v-for="mp in sortedMarketplaces" :value="mp.name">{{ mp.name }}</option>
-                    </select>
-                </div>
-            </div>
-            <div v-for="item in itemsByMarketplaces" class="flex items-center mx-4">
-                <div class="w-full my-1">
-                    <input
-                        :id="`checkbox${item.id}`"
-                        type="checkbox" value=""
-                        class="hidden"
-                    >
-                    <label
-                        :for="`checkbox${item.id}`"
-                        class="w-full flex items-center p-4 h-10 rounded dark:text-white cursor-pointer hover:bg-gray-400 dark:hover:bg-gray-600"
-                    >
-                        <span class="checkbox-inner flex items-center justify-center h-8 text-transparent border-2 border-gray-300 rounded-full basis-8"></span>
-                        <figure class="leading-none w-4/5">
-                            <strong>{{ item.quantity }} {{ item.product }}</strong><span v-if="item.brand">,</span> <em>{{ item.brand }}</em><br>
-                            <small>{{ item.comments }}</small>
-                            <small v-if="item.isNonessential" class="text-blue-500 dark:text-blue-300">&ensp;(Nonessential)</small>
-                        </figure>
-                    </label>
-                </div>
-            </div>
-            <div class="w-full px-3">
-                <button
-                    @click="marketShoppingCompleted"
-                    type="button"
-                    class="block w-full text-white bg-damask-500 hover:bg-damask-700 focus:ring-4 focus:ring-damask-200 font-medium rounded-lg text-md px-5 py-2.5 mt-6 dark:bg-damask-700 dark:hover:bg-damask-500 focus:outline-none dark:focus:ring-damask-900 text-center inline-flex items-center justify-center disabled:text-gray-400 disabled:bg-gray-600"
-                    :disabled="isMarketplaceDisabled">
-                        {{ isActiveMarketplace ? marketplacesStore.activeMarket : '' }} Completed
-                </button>
+    <div class="max-w-3xl mx-auto">
+
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white px-4 pt-4 mb-1">Shopping</h1>
+
+        <!-- Marketplace filter pills -->
+        <div class="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
+            <button
+                @click="marketplacesStore.activeMarket = 'all'"
+                :class="marketplacesStore.activeMarket === 'all'
+                    ? 'bg-firefly-500 text-white'
+                    : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
+                class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+            >
+                All
+            </button>
+            <button
+                v-for="mp in sortedMarketplaces"
+                :key="mp.id"
+                @click="marketplacesStore.activeMarket = mp.name"
+                :class="marketplacesStore.activeMarket === mp.name
+                    ? 'bg-firefly-500 text-white'
+                    : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
+                class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+            >
+                {{ mp.name }}
+            </button>
+        </div>
+
+        <!-- Item count -->
+        <div class="px-4 pb-2 flex items-center justify-between">
+            <span class="text-xs text-gray-400 dark:text-gray-500">
+                {{ uncheckedItems.length }} item{{ uncheckedItems.length !== 1 ? 's' : '' }} remaining
+            </span>
+            <button
+                v-if="checkedItems.length > 0"
+                @click="clearChecked"
+                class="text-xs text-firefly-500 font-medium"
+            >
+                Clear checked
+            </button>
+        </div>
+
+        <!-- Unchecked items -->
+        <div class="mx-4 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
+            <div
+                v-if="uncheckedItems.length === 0 && checkedItems.length === 0"
+                class="px-4 py-8 text-center text-gray-400 dark:text-gray-500 text-sm"
+            >
+                No items
             </div>
 
-        </form>
+            <div
+                v-for="item in uncheckedItems"
+                :key="item.id"
+                @click="toggle(item.id!)"
+                class="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 dark:active:bg-firefly-800 select-none"
+            >
+                <!-- Empty circle -->
+                <div class="shrink-0 w-6 h-6 rounded-full border-2 border-gray-300 dark:border-firefly-600"></div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                        <span class="font-medium text-gray-900 dark:text-white">
+                            {{ item.quantity ? `${item.quantity} ` : '' }}{{ item.product }}
+                        </span>
+                        <span v-if="item.brand" class="text-sm text-gray-500 dark:text-gray-400">
+                            {{ item.brand }}
+                        </span>
+                    </div>
+                    <p v-if="item.comments" class="text-sm text-gray-400 dark:text-gray-500 truncate">
+                        {{ item.comments }}
+                    </p>
+                </div>
+
+                <span
+                    v-if="item.isNonessential"
+                    class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-damask-100 text-damask-700"
+                >
+                    Nice-to-have
+                </span>
+            </div>
+        </div>
+
+        <!-- Checked items -->
+        <div v-if="checkedItems.length > 0" class="mx-4 mt-3 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
+            <div class="px-4 py-2">
+                <span class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+                    Checked off
+                </span>
+            </div>
+            <div
+                v-for="item in checkedItems"
+                :key="item.id"
+                @click="toggle(item.id!)"
+                class="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 dark:active:bg-firefly-800 select-none"
+            >
+                <!-- Filled circle with checkmark -->
+                <div class="shrink-0 w-6 h-6 rounded-full bg-firefly-500 flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <span class="flex-1 text-gray-400 dark:text-gray-600 line-through text-sm">
+                    {{ item.product }}
+                </span>
+            </div>
+        </div>
+
+        <div class="h-4"></div>
     </div>
-    <router-view></router-view>
 </template>
 
-<style lang="scss">
-input[type="checkbox"] + label span.checkbox-inner {
-  background-color: #c3c3c3;
-  border-color: #000;
-}
-
-.dark input[type="checkbox"] + label span.checkbox-inner {
-  background-color: #fff;
-}
-
-input[type="checkbox"]:checked + label span.checkbox-inner {
-  background-color: #295561;
-  border-color: #000;
-  color: #fff;
-  background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='14px' height='10px' viewBox='0 0 14 10' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 59.1 (86144) - https://sketch.com --%3E%3Ctitle%3Echeck%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='ios_modification' transform='translate(-27.000000, -191.000000)' fill='%23FFFFFF' fill-rule='nonzero'%3E%3Cg id='Group-Copy' transform='translate(0.000000, 164.000000)'%3E%3Cg id='ic-check-18px' transform='translate(25.000000, 23.000000)'%3E%3Cpolygon id='check' points='6.61 11.89 3.5 8.78 2.44 9.84 6.61 14 15.56 5.05 14.5 4'%3E%3C/polygon%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-size: 14px 10px;
-}
-
-.dark input[type="checkbox"]:checked + label span.checkbox-inner {
-  border-color: #fff;
-}
-
-input[type="checkbox"]:checked + label figure {
-  text-decoration: line-through;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.dark input[type="checkbox"]:checked + label figure {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.checkbox-inner {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  margin-right: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background: transparent no-repeat center;
-}
+<style scoped>
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>

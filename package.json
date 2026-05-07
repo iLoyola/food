@@ -21,7 +21,6 @@
     "@vue/compat": "^3.4.15",
     "@vue/compiler-sfc": "^3.4.15",
     "core-js": "^3.37.1",
-    "flowbite": "^2.5.1",
     "less": "^4.2.0",
     "lightningcss": "^1.24.0",
     "npm": "^10.8.3",

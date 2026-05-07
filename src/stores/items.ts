@@ -48,7 +48,7 @@ export const useItemsStore = defineStore('items', () => {
     const loading = ref<boolean>(false)
     const items = reactive<ItemModel[]>([])
 
-    async function fetchItems(): Promise<ItemModel[]> {
+    async function fetchItems(): Promise<void> {
         try {
             loading.value = true
             const { data, error } = await supabase
@@ -61,27 +61,88 @@ export const useItemsStore = defineStore('items', () => {
                     )
                 `)
                 .eq('is_enabled', true)
+                .order('product')
 
             if (error) throw error
 
+            items.splice(0, items.length)
             items.push(...(data as DbItem[]).map(toItemModel))
         } catch (error) {
             console.error(error)
         } finally {
             loading.value = false
         }
-        return []
     }
 
-    async function updateItems(_items: ItemModel[]) {
-        // TODO: implement
-        return []
+    async function addItem(item: ItemModel): Promise<void> {
+        const { data, error } = await supabase
+            .from('items')
+            .insert({
+                product: item.product.trim(),
+                brand: item.brand?.trim() || null,
+                quantity: item.quantity ?? 1,
+                comments: item.comments?.trim() || null,
+                is_nonessential: item.isNonessential,
+                is_enabled: true,
+                category_id: item.category?.id || null,
+            })
+            .select('id')
+            .single()
+
+        if (error) throw error
+
+        if (item.marketplacesIds.length > 0) {
+            const { error: mpError } = await supabase
+                .from('item_marketplaces')
+                .insert(item.marketplacesIds.map(mp_id => ({ item_id: data.id, marketplace_id: mp_id })))
+            if (mpError) throw mpError
+        }
+
+        await fetchItems()
     }
 
-    async function deleteItem(item: ItemModel) {
-        // TODO: implement
-        return item
+    async function updateItem(item: ItemModel): Promise<void> {
+        const { error } = await supabase
+            .from('items')
+            .update({
+                product: item.product.trim(),
+                brand: item.brand?.trim() || null,
+                quantity: item.quantity ?? 1,
+                comments: item.comments?.trim() || null,
+                is_nonessential: item.isNonessential,
+                category_id: item.category?.id || null,
+            })
+            .eq('id', item.id!)
+
+        if (error) throw error
+
+        const { error: delError } = await supabase
+            .from('item_marketplaces')
+            .delete()
+            .eq('item_id', item.id!)
+
+        if (delError) throw delError
+
+        if (item.marketplacesIds.length > 0) {
+            const { error: mpError } = await supabase
+                .from('item_marketplaces')
+                .insert(item.marketplacesIds.map(mp_id => ({ item_id: item.id!, marketplace_id: mp_id })))
+            if (mpError) throw mpError
+        }
+
+        await fetchItems()
     }
 
-    return { fetchItems, updateItems, deleteItem, items }
+    async function deleteItem(item: ItemModel): Promise<void> {
+        const { error } = await supabase
+            .from('items')
+            .update({ is_enabled: false })
+            .eq('id', item.id!)
+
+        if (error) throw error
+
+        await fetchItems()
+    }
+
+    return { fetchItems, addItem, updateItem, deleteItem, items, loading }
 })
