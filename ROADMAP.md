@@ -48,7 +48,28 @@
 
 ---
 
-## Phase 4 — Google Assistant Integration
+## Phase 4 — Content Management (Recipes & Marketplaces)
+- [ ] **Recipe CRUD**
+  - [ ] Add recipe form — name, alias, description, tags, title position
+  - [ ] Ingredients editor — add/remove/reorder rows (quantity, volume, ingredient, process, extra)
+  - [ ] Steps editor — add/remove/reorder steps with instruction text
+  - [ ] Notes and reference URL fields
+  - [ ] Primary image upload to Supabase Storage (with preview)
+  - [ ] Bound recipes selector (link related recipes)
+  - [ ] Edit existing recipe (pre-populated form)
+  - [ ] Delete / disable recipe (soft delete)
+  - [ ] Recipe list management view (enable/disable toggle, edit button)
+- [ ] **Marketplace CRUD**
+  - [ ] Add marketplace form — name
+  - [ ] Edit marketplace name
+  - [ ] Delete marketplace (with guard if items are linked)
+  - [ ] Marketplace list management view
+- [ ] **Admin routing** — gate management pages behind auth; add entry point from Account page
+- [ ] **Supabase RLS** — ensure write policies are locked to authenticated users only
+
+---
+
+## Phase 5 — Google Assistant Integration
 - [ ] Design voice command structure
   - "Add [item] to my shopping list"
   - "What's on my shopping list"
@@ -61,7 +82,7 @@
 
 ---
 
-## Phase 5 — Testing & Launch
+## Phase 6 — Testing & Launch
 - [ ] Unit tests for components
 - [ ] Integration tests for Supabase queries
 - [ ] End to end testing
