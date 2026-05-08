@@ -28,8 +28,19 @@ function titlePositioning(tp: string) {
 
         <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Recipes</h1>
 
+        <!-- Loading skeleton -->
+        <div v-if="recipesStore.isRequestPending" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div
+                v-for="n in 6"
+                :key="n"
+                class="relative aspect-[16/9] rounded-2xl overflow-hidden border-2 border-firefly-100 dark:border-firefly-800"
+            >
+                <image-skeleton class="w-full h-full" />
+            </div>
+        </div>
+
         <div
-            v-if="recipes.length === 0"
+            v-else-if="recipes.length === 0"
             class="rounded-2xl bg-white dark:bg-firefly-900 px-4 py-10 text-center text-sm text-gray-400 dark:text-gray-500"
         >
             No recipes yet.

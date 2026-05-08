@@ -196,11 +196,12 @@ function resetForm() {
         </h2>
 
         <div class="rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800 mb-6">
-            <div
-                v-if="itemsStore.loading"
-                class="px-4 py-6 text-center text-sm text-gray-400"
-            >
-                Loading…
+            <div v-if="itemsStore.loading" class="px-4 py-4 space-y-3">
+                <div
+                    v-for="n in 5"
+                    :key="n"
+                    class="h-10 rounded-xl bg-gray-100 dark:bg-firefly-800 animate-pulse"
+                />
             </div>
             <div
                 v-else-if="itemsStore.items.length === 0"
