@@ -68,7 +68,7 @@
   - [x] Enable/disable toggle (soft-hides from Shopping filter)
   - [x] Marketplace list management view with item counts
 - [x] **Admin routing** — `/admin/marketplaces` + `/admin/recipes`; existing auth guard protects all routes; entry points in Account page
-- [ ] **Supabase RLS** — ensure write policies are locked to authenticated users only
+- [x] **Supabase RLS** — ensure write policies are locked to authenticated users only
 
 ---
 
