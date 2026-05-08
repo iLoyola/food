@@ -14,6 +14,58 @@
                     <p class="text-xs text-gray-500 dark:text-gray-400">Signed in</p>
                 </div>
             </div>
+
+            <!-- Change password row -->
+            <div v-if="!showPasswordForm" class="px-4 py-3">
+                <button
+                    type="button"
+                    @click="showPasswordForm = true"
+                    class="text-sm text-firefly-500 font-medium hover:text-firefly-600 transition-colors"
+                >
+                    Change password
+                </button>
+            </div>
+
+            <!-- Change password form -->
+            <div v-else class="px-4 py-4 space-y-3">
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Change password</p>
+
+                <FullAlerts v-if="passwordError" type="error" :message="passwordError" />
+                <FullAlerts v-if="passwordSuccess" type="success" :message="passwordSuccess" />
+
+                <input
+                    v-model="newPassword"
+                    type="password"
+                    placeholder="New password (min. 8 characters)"
+                    autocomplete="new-password"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                />
+                <input
+                    v-model="confirmPassword"
+                    type="password"
+                    placeholder="Confirm new password"
+                    autocomplete="new-password"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    @keydown.enter="changePassword"
+                />
+                <div class="flex gap-2 pt-1">
+                    <button
+                        type="button"
+                        @click="changePassword"
+                        :disabled="passwordLoading"
+                        class="px-4 py-2 rounded-xl bg-firefly-500 hover:bg-firefly-600 text-white text-sm font-medium transition-colors disabled:opacity-50"
+                    >
+                        {{ passwordLoading ? 'Saving…' : 'Save password' }}
+                    </button>
+                    <button
+                        type="button"
+                        @click="cancelPasswordChange"
+                        class="px-4 py-2 rounded-xl border border-gray-200 dark:border-firefly-700 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-firefly-800 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Admin -->
@@ -68,14 +120,61 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
+import { supabase } from '../supabase/client.js'
+import FullAlerts from '../components/FullAlerts.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
+const showPasswordForm = ref(false)
+const newPassword = ref('')
+const confirmPassword = ref('')
+const passwordLoading = ref(false)
+const passwordError = ref('')
+const passwordSuccess = ref('')
+
 async function signOut() {
     await authStore.signOut()
     router.push({ name: 'register' })
+}
+
+async function changePassword() {
+    passwordError.value = ''
+    passwordSuccess.value = ''
+    if (newPassword.value.length < 8) {
+        passwordError.value = 'Password must be at least 8 characters.'
+        return
+    }
+    if (newPassword.value !== confirmPassword.value) {
+        passwordError.value = 'Passwords do not match.'
+        return
+    }
+    passwordLoading.value = true
+    try {
+        const { error } = await supabase.auth.updateUser({ password: newPassword.value })
+        if (error) throw error
+        passwordSuccess.value = 'Password updated successfully.'
+        newPassword.value = ''
+        confirmPassword.value = ''
+        setTimeout(() => {
+            showPasswordForm.value = false
+            passwordSuccess.value = ''
+        }, 2000)
+    } catch (e: any) {
+        passwordError.value = e.message
+    } finally {
+        passwordLoading.value = false
+    }
+}
+
+function cancelPasswordChange() {
+    showPasswordForm.value = false
+    newPassword.value = ''
+    confirmPassword.value = ''
+    passwordError.value = ''
+    passwordSuccess.value = ''
 }
 </script>
