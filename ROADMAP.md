@@ -72,16 +72,22 @@
 
 ---
 
-## Phase 5 — Google Assistant Integration
-- [ ] Design voice command structure
+## Phase 5 — Voice Assistant Integration
+- [x] Design voice command structure
   - "Add [item] to my shopping list"
   - "What's on my shopping list"
   - "Remove [item] from my list"
-- [ ] Build Supabase Edge Function as API endpoint
-- [ ] Register Google Action in Google Actions Console
-- [ ] Connect Google Assistant to Supabase via webhook
-- [ ] Handle auth between Google and Supabase
-- [ ] Test end to end on Google Home device
+  - Unknown items prompt user to add via app first
+- [x] Build Supabase Edge Function as API endpoint (`supabase/functions/shopping-assistant`)
+  - API key auth (x-api-key header or ?key= query param)
+  - Exact + partial item name matching (case-insensitive)
+  - Deployed to Prod with --no-verify-jwt
+- [ ] **iOS (Siri)** — iOS Shortcut calling Edge Function; "Hey Siri, add [item] to my list"
+- [ ] **Google Home + Android** — IFTTT applet bridging Google Assistant to Edge Function webhook
+- [ ] Test end to end on all devices (iPhone, Google Home, Android)
+
+> Note: Google Conversational Actions were shut down June 2023. Integration uses
+> Supabase Edge Function + iOS Shortcuts (iPhone) + IFTTT (Google Home / Android).
 
 ---
 
