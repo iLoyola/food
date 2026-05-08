@@ -27,7 +27,7 @@
 
 ---
 
-## Phase 3 — UI Redesign & Refactor ← IN PROGRESS
+## Phase 3 — UI Redesign & Refactor ✓ COMPLETE
 - [x] Remove Flowbite; replace with custom Tailwind components throughout
 - [x] Slim Header to logo + dark mode toggle only
 - [x] Add bottom navigation bar (Shopping, Gather, Recipes, Account)
@@ -41,14 +41,14 @@
 - [x] Single recipe page redesign — cookbook layout (hero image, ingredients card, numbered steps, notes callout)
 - [x] Account page — email display + sign out
 - [x] PWA manifest and icon set
-- [ ] Notifications and alerts redesign (`FullAlerts.vue`, `Notifications.vue`)
-- [ ] Loading states and skeletons (`ImageSkeleton.vue`, `LoadingSvg.vue`) — audit and update to match new design
-- [ ] Register page redesign to match new design system
-- [ ] Unused components cleanup (`BreadCrumbs.vue`, `AddItem.vue`, `ListBox.vue`, `ProductInput.vue`)
+- [x] Notifications and alerts redesign — global toast store + Notifications.vue + FullAlerts.vue inline component
+- [x] Loading states and skeletons — ImageSkeleton and LoadingSvg rewritten; skeleton grid in MyRecipes; skeleton rows in Basket
+- [x] Register page redesign to match new design system; fixed sign-in redirect
+- [x] Unused components deleted: `BreadCrumbs.vue`, `AddItem.vue`, `ListBox.vue`, `ProductInput.vue`, `AsyncHome.vue`, `Home.vue`
 
 ---
 
-## Phase 4 — Content Management (Recipes & Marketplaces)
+## Phase 4 — Content Management (Recipes & Marketplaces) ← NEXT
 - [ ] **Recipe CRUD**
   - [ ] Add recipe form — name, alias, description, tags, title position
   - [ ] Ingredients editor — add/remove/reorder rows (quantity, volume, ingredient, process, extra)
