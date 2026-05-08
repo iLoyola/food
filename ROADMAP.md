@@ -51,23 +51,23 @@
 ---
 
 ## Phase 4 — Content Management (Recipes & Marketplaces) ← NEXT
-- [ ] **Recipe CRUD**
-  - [ ] Add recipe form — name, alias, description, tags, title position
-  - [ ] Ingredients editor — add/remove/reorder rows (quantity, volume, ingredient, process, extra)
-  - [ ] Steps editor — add/remove/reorder steps with instruction text
-  - [ ] Notes and reference URL fields
-  - [ ] Primary image upload to Supabase Storage (with preview)
-  - [ ] Bound recipes selector (link related recipes)
-  - [ ] Edit existing recipe (pre-populated form)
-  - [ ] Delete / disable recipe (soft delete)
-  - [ ] Recipe list management view (enable/disable toggle, edit button)
-- [ ] **Marketplace CRUD**
+- [x] **Recipe CRUD**
+  - [x] Add recipe form — name, alias, description, tags, title position
+  - [x] Ingredients editor — add/remove/reorder rows (quantity, volume, ingredient, process, extra)
+  - [x] Steps editor — add/remove/reorder steps with instruction text
+  - [x] Notes and reference URL fields
+  - [x] Primary image upload to Supabase Storage (with preview)
+  - [x] Bound recipes selector (link related recipes)
+  - [x] Edit existing recipe (pre-populated form)
+  - [x] Delete / disable recipe (soft delete)
+  - [x] Recipe list management view (enable/disable toggle, edit button)
+- [x] **Marketplace CRUD**
   - [x] Add marketplace form — name
   - [x] Edit marketplace name inline
   - [x] Delete marketplace with inline confirm (warns if items are linked)
   - [x] Enable/disable toggle (soft-hides from Shopping filter)
   - [x] Marketplace list management view with item counts
-- [x] **Admin routing** — `/admin/marketplaces`; existing auth guard protects all routes; entry point in Account page
+- [x] **Admin routing** — `/admin/marketplaces` + `/admin/recipes`; existing auth guard protects all routes; entry points in Account page
 - [ ] **Supabase RLS** — ensure write policies are locked to authenticated users only
 
 ---

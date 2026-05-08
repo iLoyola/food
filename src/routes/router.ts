@@ -8,6 +8,8 @@ import Recipes from '../pages/MyRecipes.vue'
 import Recipe from '../pages/MyRecipe.vue'
 import Account from '../pages/Account.vue'
 import ManageMarketplaces from '../pages/admin/ManageMarketplaces.vue'
+import ManageRecipes from '../pages/admin/ManageRecipes.vue'
+import RecipeForm from '../pages/admin/RecipeForm.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -54,6 +56,21 @@ const router = createRouter({
             path: '/admin/marketplaces',
             component: ManageMarketplaces,
             name: 'admin-marketplaces',
+        },
+        {
+            path: '/admin/recipes',
+            component: ManageRecipes,
+            name: 'admin-recipes',
+        },
+        {
+            path: '/admin/recipes/new',
+            component: RecipeForm,
+            name: 'admin-recipe-new',
+        },
+        {
+            path: '/admin/recipes/:id/edit',
+            component: RecipeForm,
+            name: 'admin-recipe-edit',
         },
     ]
 })
