@@ -198,7 +198,7 @@ async function justPurchased() {
                     type="button"
                     @click="justPurchased"
                     :disabled="purchasing"
-                    class="pointer-events-auto w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-2xl bg-firefly-600 dark:bg-firefly-500 text-white shadow-lg shadow-firefly-900/30 active:scale-[0.98] transition-transform disabled:opacity-60"
+                    class="pointer-events-auto w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-2xl bg-damask-500 hover:bg-damask-600 dark:bg-damask-500 text-white shadow-lg shadow-damask-900/20 active:scale-[0.98] transition-transform disabled:opacity-60"
                 >
                     <div class="flex items-center gap-2.5">
                         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
