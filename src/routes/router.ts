@@ -83,9 +83,12 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
-    // Read hash synchronously before getSession() — Supabase clears it during token exchange
+    // Read URL synchronously before getSession() — Supabase clears params during token exchange.
+    // PKCE flow uses query params (?type=invite); implicit flow uses hash (#type=invite).
+    const searchType = new URLSearchParams(window.location.search).get('type')
     const hashType = new URLSearchParams(window.location.hash.slice(1)).get('type')
-    const isSetupFlow = hashType === 'invite' || hashType === 'recovery'
+    const isSetupFlow = searchType === 'invite' || searchType === 'recovery'
+        || hashType === 'invite' || hashType === 'recovery'
 
     const { data: { session } } = await supabase.auth.getSession()
     const isAuthenticated = !!session
