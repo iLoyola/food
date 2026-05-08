@@ -117,11 +117,13 @@ function clearChecked() {
             <template v-else>
                 <!-- Unchecked items -->
                 <div class="mx-4 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
-                    <div
+                    <button
                         v-for="item in uncheckedItems"
                         :key="item.id"
+                        type="button"
                         @click="toggle(item.id!)"
-                        class="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 dark:active:bg-firefly-800 select-none"
+                        class="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 dark:active:bg-firefly-800 select-none"
+                        :aria-label="`Mark ${item.product} as done`"
                     >
                         <div class="shrink-0 w-6 h-6 rounded-full border-2 border-gray-300 dark:border-firefly-600"></div>
                         <div class="flex-1 min-w-0">
@@ -143,7 +145,7 @@ function clearChecked() {
                         >
                             Nice-to-have
                         </span>
-                    </div>
+                    </button>
 
                     <!-- All items checked -->
                     <div
@@ -161,11 +163,13 @@ function clearChecked() {
                             Checked off
                         </span>
                     </div>
-                    <div
+                    <button
                         v-for="item in checkedItems"
                         :key="item.id"
+                        type="button"
                         @click="toggle(item.id!)"
-                        class="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 dark:active:bg-firefly-800 select-none"
+                        class="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 dark:active:bg-firefly-800 select-none"
+                        :aria-label="`Mark ${item.product} as not done`"
                     >
                         <div class="shrink-0 w-6 h-6 rounded-full bg-firefly-500 flex items-center justify-center">
                             <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
@@ -175,7 +179,7 @@ function clearChecked() {
                         <span class="flex-1 text-gray-400 dark:text-gray-600 line-through text-sm">
                             {{ item.product }}
                         </span>
-                    </div>
+                    </button>
                 </div>
             </template>
 

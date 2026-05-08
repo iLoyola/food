@@ -91,6 +91,8 @@ async function executeDelete(id: string) {
                     <!-- Enable/disable toggle -->
                     <button
                         type="button"
+                        role="switch"
+                        :aria-checked="recipe.isEnabled"
                         @click="store.toggleRecipeEnabled(recipe.id, !recipe.isEnabled)"
                         :class="recipe.isEnabled ? 'bg-firefly-500' : 'bg-gray-200 dark:bg-firefly-700'"
                         class="relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-firefly-400 focus:ring-offset-2"

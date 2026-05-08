@@ -17,9 +17,15 @@ onMounted(() => {
     recipesStore.recipe = recipesStore.recipesWithImages.find(
         ({ alias }) => alias === route.params.alias
     ) ?? emptyRecipe
+    if (recipesStore.recipe.name) {
+        document.title = `${recipesStore.recipe.name} | iLoyola`
+    }
 })
 
-onUnmounted(() => { recipesStore.recipe = emptyRecipe })
+onUnmounted(() => {
+    recipesStore.recipe = emptyRecipe
+    document.title = 'iLoyola'
+})
 
 const recipe = computed(() => recipesStore.recipe)
 

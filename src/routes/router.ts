@@ -7,9 +7,10 @@ import Basket from '../pages/Basket.vue'
 import Recipes from '../pages/MyRecipes.vue'
 import Recipe from '../pages/MyRecipe.vue'
 import Account from '../pages/Account.vue'
-import ManageMarketplaces from '../pages/admin/ManageMarketplaces.vue'
-import ManageRecipes from '../pages/admin/ManageRecipes.vue'
-import RecipeForm from '../pages/admin/RecipeForm.vue'
+
+const ManageMarketplaces = () => import('../pages/admin/ManageMarketplaces.vue')
+const ManageRecipes = () => import('../pages/admin/ManageRecipes.vue')
+const RecipeForm = () => import('../pages/admin/RecipeForm.vue')
 
 const router = createRouter({
     history: createWebHistory(),

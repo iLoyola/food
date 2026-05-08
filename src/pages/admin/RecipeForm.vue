@@ -301,6 +301,9 @@ async function submit() {
                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Visible to users</span>
                     <button
                         type="button"
+                        role="switch"
+                        :aria-checked="form.isEnabled"
+                        :aria-label="form.isEnabled ? 'Visible to users' : 'Hidden from users'"
                         @click="form.isEnabled = !form.isEnabled"
                         :class="form.isEnabled ? 'bg-firefly-500' : 'bg-gray-200 dark:bg-firefly-700'"
                         class="relative inline-flex h-6 w-11 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-firefly-400 focus:ring-offset-2"

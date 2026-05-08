@@ -302,8 +302,10 @@ export const useRecipesStore = defineStore('recipes', {
         },
 
         async uploadRecipeImage(alias: string, file: File): Promise<void> {
+            const toast = useToastStore()
             const sizes = ['xl', 'lg', 'md', 'sm']
             const arrayBuffer = await file.arrayBuffer()
+            let failed = false
             for (const size of sizes) {
                 const { error } = await supabase.storage
                     .from('recipes')
@@ -311,8 +313,12 @@ export const useRecipesStore = defineStore('recipes', {
                         contentType: file.type,
                         upsert: true,
                     })
-                if (error) console.error(`Image upload failed for size ${size}:`, error)
+                if (error) {
+                    console.error(`Image upload failed for size ${size}:`, error)
+                    failed = true
+                }
             }
+            if (failed) toast.show('Image uploaded with errors — some sizes may be missing.', 'warning')
         },
     },
 })
