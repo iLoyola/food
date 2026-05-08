@@ -7,6 +7,7 @@ import Basket from '../pages/Basket.vue'
 import Recipes from '../pages/MyRecipes.vue'
 import Recipe from '../pages/MyRecipe.vue'
 import Account from '../pages/Account.vue'
+import ManageMarketplaces from '../pages/admin/ManageMarketplaces.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -44,6 +45,15 @@ const router = createRouter({
             path: '/account',
             component: Account,
             name: 'account',
+        },
+        {
+            path: '/admin',
+            redirect: '/admin/marketplaces',
+        },
+        {
+            path: '/admin/marketplaces',
+            component: ManageMarketplaces,
+            name: 'admin-marketplaces',
         },
     ]
 })
