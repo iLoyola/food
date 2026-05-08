@@ -49,6 +49,34 @@ export const useItemsStore = defineStore('items', () => {
     const toast = useToastStore()
     const loading = ref<boolean>(false)
     const items = reactive<ItemModel[]>([])
+    const checkedIds = ref<Set<string>>(new Set())
+
+    function toggleChecked(id: string) {
+        const next = new Set(checkedIds.value)
+        next.has(id) ? next.delete(id) : next.add(id)
+        checkedIds.value = next
+    }
+
+    function clearChecked() {
+        checkedIds.value = new Set()
+    }
+
+    async function purchaseItems(ids: string[]): Promise<void> {
+        if (!ids.length) return
+        try {
+            const { error } = await supabase
+                .from('items')
+                .update({ is_enabled: false })
+                .in('id', ids)
+            if (error) throw error
+            clearChecked()
+            await fetchItems()
+            toast.show(`${ids.length} item${ids.length !== 1 ? 's' : ''} marked as purchased.`, 'success')
+        } catch (err) {
+            console.error(err)
+            toast.show('Failed to mark items as purchased.', 'error')
+        }
+    }
 
     async function fetchItems(): Promise<void> {
         try {
@@ -168,5 +196,5 @@ export const useItemsStore = defineStore('items', () => {
         }
     }
 
-    return { fetchItems, addItem, updateItem, deleteItem, items, loading }
+    return { fetchItems, addItem, updateItem, deleteItem, purchaseItems, toggleChecked, clearChecked, items, checkedIds, loading }
 })

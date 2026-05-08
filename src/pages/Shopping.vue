@@ -6,7 +6,7 @@ import { useMarketplacesStore } from '../stores/marketplaces.js'
 const marketplacesStore = useMarketplacesStore()
 const itemsStore = useItemsStore()
 
-const checked = ref<Set<string>>(new Set())
+const purchasing = ref(false)
 
 const sortedMarketplaces = computed(() =>
     [...marketplacesStore.marketplaces].sort((a, b) => a.name.localeCompare(b.name))
@@ -20,21 +20,20 @@ const filteredItems = computed(() => {
 })
 
 const uncheckedItems = computed(() =>
-    filteredItems.value.filter(item => !checked.value.has(item.id!))
+    filteredItems.value.filter(item => !itemsStore.checkedIds.has(item.id!))
 )
 
 const checkedItems = computed(() =>
-    filteredItems.value.filter(item => checked.value.has(item.id!))
+    filteredItems.value.filter(item => itemsStore.checkedIds.has(item.id!))
 )
 
-function toggle(id: string) {
-    const next = new Set(checked.value)
-    next.has(id) ? next.delete(id) : next.add(id)
-    checked.value = next
-}
+// All checked IDs across all filters (for the purchase action)
+const allCheckedIds = computed(() => [...itemsStore.checkedIds])
 
-function clearChecked() {
-    checked.value = new Set()
+async function justPurchased() {
+    purchasing.value = true
+    await itemsStore.purchaseItems(allCheckedIds.value)
+    purchasing.value = false
 }
 </script>
 
@@ -93,17 +92,10 @@ function clearChecked() {
             </div>
 
             <!-- Item count -->
-            <div class="px-4 pb-2 flex items-center justify-between">
+            <div class="px-4 pb-2">
                 <span class="text-xs text-gray-400 dark:text-gray-500">
                     {{ uncheckedItems.length }} item{{ uncheckedItems.length !== 1 ? 's' : '' }} remaining
                 </span>
-                <button
-                    v-if="checkedItems.length > 0"
-                    @click="clearChecked"
-                    class="text-xs text-firefly-500 font-medium"
-                >
-                    Clear checked
-                </button>
             </div>
 
             <!-- No items for active marketplace filter -->
@@ -121,7 +113,7 @@ function clearChecked() {
                         v-for="item in uncheckedItems"
                         :key="item.id"
                         type="button"
-                        @click="toggle(item.id!)"
+                        @click="itemsStore.toggleChecked(item.id!)"
                         class="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 dark:active:bg-firefly-800 select-none"
                         :aria-label="`Mark ${item.product} as done`"
                     >
@@ -167,7 +159,7 @@ function clearChecked() {
                         v-for="item in checkedItems"
                         :key="item.id"
                         type="button"
-                        @click="toggle(item.id!)"
+                        @click="itemsStore.toggleChecked(item.id!)"
                         class="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 dark:active:bg-firefly-800 select-none"
                         :aria-label="`Mark ${item.product} as not done`"
                     >
@@ -187,6 +179,42 @@ function clearChecked() {
 
         <div class="h-4"></div>
     </div>
+
+    <!-- Just Purchased action bar -->
+    <Teleport to="body">
+        <Transition
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="translate-y-full opacity-0"
+            enter-to-class="translate-y-0 opacity-100"
+            leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="translate-y-0 opacity-100"
+            leave-to-class="translate-y-full opacity-0"
+        >
+            <div
+                v-if="allCheckedIds.length > 0"
+                class="fixed bottom-16 inset-x-0 z-50 px-4 pb-3 pointer-events-none"
+            >
+                <button
+                    type="button"
+                    @click="justPurchased"
+                    :disabled="purchasing"
+                    class="pointer-events-auto w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-2xl bg-firefly-600 dark:bg-firefly-500 text-white shadow-lg shadow-firefly-900/30 active:scale-[0.98] transition-transform disabled:opacity-60"
+                >
+                    <div class="flex items-center gap-2.5">
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span class="font-semibold text-sm">
+                            {{ purchasing ? 'Updating…' : 'Just purchased' }}
+                        </span>
+                    </div>
+                    <span class="shrink-0 bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                        {{ allCheckedIds.length }}
+                    </span>
+                </button>
+            </div>
+        </Transition>
+    </Teleport>
 </template>
 
 <style scoped>
