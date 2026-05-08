@@ -43,110 +43,143 @@ function clearChecked() {
 
         <h1 class="text-2xl font-semibold text-gray-900 dark:text-white px-4 pt-4 mb-1">Shopping</h1>
 
-        <!-- Marketplace filter pills -->
-        <div class="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
-            <button
-                @click="marketplacesStore.activeMarket = 'all'"
-                :class="marketplacesStore.activeMarket === 'all'
-                    ? 'bg-firefly-500 text-white'
-                    : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
-                class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+        <!-- Empty state — no items in the list at all -->
+        <div
+            v-if="itemsStore.items.length === 0 && !itemsStore.loading"
+            class="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center"
+        >
+            <div class="w-16 h-16 rounded-full bg-firefly-50 dark:bg-firefly-900 flex items-center justify-center mb-5">
+                <svg class="w-8 h-8 text-firefly-400 dark:text-firefly-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Your list is empty</h2>
+            <p class="text-sm text-gray-400 dark:text-gray-500 mb-6 max-w-xs leading-relaxed">
+                Head over to Gather to start adding items to your shopping list.
+            </p>
+            <router-link
+                to="/basket"
+                class="px-5 py-2.5 rounded-xl bg-firefly-500 hover:bg-firefly-600 text-white text-sm font-medium transition-colors"
             >
-                All
-            </button>
-            <button
-                v-for="mp in sortedMarketplaces"
-                :key="mp.id"
-                @click="marketplacesStore.activeMarket = mp.name"
-                :class="marketplacesStore.activeMarket === mp.name
-                    ? 'bg-firefly-500 text-white'
-                    : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
-                class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
-            >
-                {{ mp.name }}
-            </button>
+                Go to Gather
+            </router-link>
         </div>
 
-        <!-- Item count -->
-        <div class="px-4 pb-2 flex items-center justify-between">
-            <span class="text-xs text-gray-400 dark:text-gray-500">
-                {{ uncheckedItems.length }} item{{ uncheckedItems.length !== 1 ? 's' : '' }} remaining
-            </span>
-            <button
-                v-if="checkedItems.length > 0"
-                @click="clearChecked"
-                class="text-xs text-firefly-500 font-medium"
-            >
-                Clear checked
-            </button>
-        </div>
+        <!-- List — items exist -->
+        <template v-else>
 
-        <!-- Unchecked items -->
-        <div class="mx-4 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
-            <div
-                v-if="uncheckedItems.length === 0 && checkedItems.length === 0"
-                class="px-4 py-8 text-center text-gray-400 dark:text-gray-500 text-sm"
-            >
-                No items
+            <!-- Marketplace filter pills -->
+            <div class="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
+                <button
+                    @click="marketplacesStore.activeMarket = 'all'"
+                    :class="marketplacesStore.activeMarket === 'all'
+                        ? 'bg-firefly-500 text-white'
+                        : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
+                    class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                >
+                    All
+                </button>
+                <button
+                    v-for="mp in sortedMarketplaces"
+                    :key="mp.id"
+                    @click="marketplacesStore.activeMarket = mp.name"
+                    :class="marketplacesStore.activeMarket === mp.name
+                        ? 'bg-firefly-500 text-white'
+                        : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
+                    class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                >
+                    {{ mp.name }}
+                </button>
             </div>
 
-            <div
-                v-for="item in uncheckedItems"
-                :key="item.id"
-                @click="toggle(item.id!)"
-                class="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 dark:active:bg-firefly-800 select-none"
-            >
-                <!-- Empty circle -->
-                <div class="shrink-0 w-6 h-6 rounded-full border-2 border-gray-300 dark:border-firefly-600"></div>
+            <!-- Item count -->
+            <div class="px-4 pb-2 flex items-center justify-between">
+                <span class="text-xs text-gray-400 dark:text-gray-500">
+                    {{ uncheckedItems.length }} item{{ uncheckedItems.length !== 1 ? 's' : '' }} remaining
+                </span>
+                <button
+                    v-if="checkedItems.length > 0"
+                    @click="clearChecked"
+                    class="text-xs text-firefly-500 font-medium"
+                >
+                    Clear checked
+                </button>
+            </div>
 
-                <!-- Content -->
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-baseline gap-1.5 flex-wrap">
-                        <span class="font-medium text-gray-900 dark:text-white">
-                            {{ item.quantity ? `${item.quantity} ` : '' }}{{ item.product }}
-                        </span>
-                        <span v-if="item.brand" class="text-sm text-gray-500 dark:text-gray-400">
-                            {{ item.brand }}
+            <!-- No items for active marketplace filter -->
+            <div
+                v-if="filteredItems.length === 0"
+                class="mx-4 rounded-2xl bg-white dark:bg-firefly-900 px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500"
+            >
+                No items at this marketplace.
+            </div>
+
+            <template v-else>
+                <!-- Unchecked items -->
+                <div class="mx-4 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
+                    <div
+                        v-for="item in uncheckedItems"
+                        :key="item.id"
+                        @click="toggle(item.id!)"
+                        class="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 dark:active:bg-firefly-800 select-none"
+                    >
+                        <div class="shrink-0 w-6 h-6 rounded-full border-2 border-gray-300 dark:border-firefly-600"></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-baseline gap-1.5 flex-wrap">
+                                <span class="font-medium text-gray-900 dark:text-white">
+                                    {{ item.quantity ? `${item.quantity} ` : '' }}{{ item.product }}
+                                </span>
+                                <span v-if="item.brand" class="text-sm text-gray-500 dark:text-gray-400">
+                                    {{ item.brand }}
+                                </span>
+                            </div>
+                            <p v-if="item.comments" class="text-sm text-gray-400 dark:text-gray-500 truncate">
+                                {{ item.comments }}
+                            </p>
+                        </div>
+                        <span
+                            v-if="item.isNonessential"
+                            class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-damask-100 text-damask-700"
+                        >
+                            Nice-to-have
                         </span>
                     </div>
-                    <p v-if="item.comments" class="text-sm text-gray-400 dark:text-gray-500 truncate">
-                        {{ item.comments }}
-                    </p>
+
+                    <!-- All items checked -->
+                    <div
+                        v-if="uncheckedItems.length === 0"
+                        class="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-500"
+                    >
+                        All done — everything's checked off.
+                    </div>
                 </div>
 
-                <span
-                    v-if="item.isNonessential"
-                    class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-damask-100 text-damask-700"
-                >
-                    Nice-to-have
-                </span>
-            </div>
-        </div>
-
-        <!-- Checked items -->
-        <div v-if="checkedItems.length > 0" class="mx-4 mt-3 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
-            <div class="px-4 py-2">
-                <span class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
-                    Checked off
-                </span>
-            </div>
-            <div
-                v-for="item in checkedItems"
-                :key="item.id"
-                @click="toggle(item.id!)"
-                class="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 dark:active:bg-firefly-800 select-none"
-            >
-                <!-- Filled circle with checkmark -->
-                <div class="shrink-0 w-6 h-6 rounded-full bg-firefly-500 flex items-center justify-center">
-                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
+                <!-- Checked items -->
+                <div v-if="checkedItems.length > 0" class="mx-4 mt-3 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
+                    <div class="px-4 py-2">
+                        <span class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+                            Checked off
+                        </span>
+                    </div>
+                    <div
+                        v-for="item in checkedItems"
+                        :key="item.id"
+                        @click="toggle(item.id!)"
+                        class="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 dark:active:bg-firefly-800 select-none"
+                    >
+                        <div class="shrink-0 w-6 h-6 rounded-full bg-firefly-500 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span class="flex-1 text-gray-400 dark:text-gray-600 line-through text-sm">
+                            {{ item.product }}
+                        </span>
+                    </div>
                 </div>
-                <span class="flex-1 text-gray-400 dark:text-gray-600 line-through text-sm">
-                    {{ item.product }}
-                </span>
-            </div>
-        </div>
+            </template>
+
+        </template>
 
         <div class="h-4"></div>
     </div>
