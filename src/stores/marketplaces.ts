@@ -1,9 +1,11 @@
 import { ref, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '../supabase/client.js'
+import { useToastStore } from './toast.js'
 import { MarketplaceModel } from '../model/marketplace.model.js'
 
 export const useMarketplacesStore = defineStore('marketplaces', () => {
+    const toast = useToastStore()
     const loading = ref<boolean>(false)
     const marketplaces = reactive<MarketplaceModel[]>([])
     const activeMarket = ref<string>('all')
@@ -25,6 +27,7 @@ export const useMarketplacesStore = defineStore('marketplaces', () => {
             })))
         } catch (error) {
             console.error(error)
+            toast.show('Failed to load marketplaces. Please try again.', 'error')
         } finally {
             loading.value = false
         }

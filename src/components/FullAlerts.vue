@@ -1,47 +1,34 @@
+<script setup lang="ts">
+defineProps<{
+    type: 'success' | 'error' | 'info' | 'warning'
+    message: string
+}>()
+</script>
+
 <template>
-    <div v-if="props.alertType === 'info'" class="alert-info flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
-        <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+    <div
+        v-if="message"
+        class="flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm"
+        :class="{
+            'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300': type === 'success',
+            'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-300': type === 'error',
+            'bg-firefly-50 text-firefly-700 dark:bg-firefly-950 dark:text-firefly-300': type === 'info',
+            'bg-damask-100 text-damask-700 dark:bg-damask-900 dark:text-damask-300': type === 'warning',
+        }"
+        role="alert"
+    >
+        <svg v-if="type === 'success'" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
-        <span class="sr-only">Info Alert</span>
-        <div>
-            <span class="font-medium">Info alert!</span> {{ props.alertText }}
-        </div>
-    </div>
-    <div v-if="props.alertType === 'danger'" class="alert-danger flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
-        <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+        <svg v-else-if="type === 'error'" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
-        <span class="sr-only">Danger Alert</span>
-        <div>
-            <span class="font-medium">Danger alert!</span> {{ props.alertText }}
-        </div>
-    </div>
-    <div v-if="props.alertType === 'success'" class="alert-success flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
-        <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+        <svg v-else-if="type === 'warning'" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
         </svg>
-        <span class="sr-only">Success Alert</span>
-        <div>
-            <span class="font-medium">Success alert!</span> {{ props.alertText }}
-        </div>
-    </div>
-    <div v-if="props.alertType === 'warning'" class="alert-warning flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800" role="alert">
-        <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+        <svg v-else class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <span class="sr-only">Warning Alert</span>
-        <div>
-            <span class="font-medium">Warning alert!</span> {{ props.alertText }}
-        </div>
+        <span>{{ message }}</span>
     </div>
 </template>
-
-<script setup lang="ts">
-
-const props = defineProps<{
-    alertType: string
-    alertText: string
-}>()
-
-</script>

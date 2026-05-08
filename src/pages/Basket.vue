@@ -28,7 +28,6 @@ function emptyForm() {
 const form = reactive(emptyForm())
 const isEditing = ref(false)
 const saving = ref(false)
-const alert = reactive({ type: '', text: '' })
 const errors = reactive({ product: '', quantity: '', marketplaces: '' })
 
 // --- Autocomplete ---
@@ -98,8 +97,6 @@ function loadItem(item: ItemModel) {
     errors.product = ''
     errors.quantity = ''
     errors.marketplaces = ''
-    alert.type = ''
-    alert.text = ''
     document.getElementById('basket-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
@@ -128,8 +125,6 @@ function validate(): boolean {
 async function submitForm() {
     if (!validate()) return
     saving.value = true
-    alert.type = ''
-    alert.text = ''
     try {
         const payload: ItemModel = {
             id: form.id,
@@ -145,17 +140,37 @@ async function submitForm() {
         }
         if (isEditing.value && form.id) {
             await itemsStore.updateItem(payload)
-            alert.type = 'success'
-            alert.text = `${form.product} updated.`
         } else {
             await itemsStore.addItem(payload)
-            alert.type = 'success'
-            alert.text = `${form.product} added to the list.`
         }
         resetForm()
     } catch {
-        alert.type = 'error'
-        alert.text = 'Something went wrong. Please try again.'
+        // toast is handled in the store
+    } finally {
+        saving.value = false
+    }
+}
+
+async function deleteCurrentItem() {
+    if (!form.id) return
+    saving.value = true
+    try {
+        const payload: ItemModel = {
+            id: form.id,
+            product: form.product,
+            quantity: form.quantity,
+            brand: form.brand,
+            comments: form.comments,
+            isNonessential: form.isNonessential,
+            marketplacesIds: form.marketplacesIds,
+            category: form.category,
+            marketplaces: form.marketplaces,
+            isEnabled: form.isEnabled,
+        }
+        await itemsStore.deleteItem(payload)
+        resetForm()
+    } catch {
+        // toast is handled in the store
     } finally {
         saving.value = false
     }
@@ -227,17 +242,6 @@ function resetForm() {
             <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-4">
                 {{ isEditing ? `Editing: ${form.product}` : 'Add new item' }}
             </h2>
-
-            <!-- Alert -->
-            <div
-                v-if="alert.text"
-                :class="alert.type === 'success'
-                    ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                    : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400'"
-                class="rounded-xl px-4 py-3 text-sm mb-4"
-            >
-                {{ alert.text }}
-            </div>
 
             <!-- Product -->
             <div class="mb-4 relative">
@@ -423,6 +427,18 @@ function resetForm() {
                     <span v-if="saving">Saving…</span>
                     <span v-else-if="isEditing">Update item</span>
                     <span v-else>Add item</span>
+                </button>
+            </div>
+
+            <!-- Delete -->
+            <div v-if="isEditing" class="mt-3 text-center">
+                <button
+                    type="button"
+                    @click="deleteCurrentItem"
+                    :disabled="saving"
+                    class="text-sm text-red-500 dark:text-red-400 hover:underline disabled:opacity-50"
+                >
+                    Remove from list
                 </button>
             </div>
         </div>

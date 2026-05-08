@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-
 import { RecipeModel } from '../model/recipe.model.js'
 import { getRecipes } from '../services/recipes.service.js'
+import { useToastStore } from './toast.js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 
@@ -60,9 +60,16 @@ export const useRecipesStore = defineStore('recipes', {
 
     actions: {
         async fetchRecipes(): Promise<void> {
-            this.isRequestPending = true
-            this.recipes = await getRecipes()
-            this.isRequestPending = false
+            const toast = useToastStore()
+            try {
+                this.isRequestPending = true
+                this.recipes = await getRecipes()
+            } catch (error) {
+                console.error(error)
+                toast.show('Failed to load recipes. Please try again.', 'error')
+            } finally {
+                this.isRequestPending = false
+            }
         },
     }
 

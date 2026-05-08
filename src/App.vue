@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import Header from './components/Header.vue'
 import BottomNav from './components/BottomNav.vue'
+import Notifications from './components/Notifications.vue'
 import { useAuthStore } from './stores/auth.js'
 import { useRecipesStore } from './stores/recipes.js'
 import { useItemsStore } from './stores/items.js'
@@ -30,5 +31,6 @@ onMounted(async () => {
             <router-view />
         </main>
         <BottomNav v-if="authStore.user" />
+        <Notifications />
     </div>
 </template>

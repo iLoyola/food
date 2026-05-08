@@ -1,6 +1,7 @@
 import { ref, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '../supabase/client.js'
+import { useToastStore } from './toast.js'
 import { ItemModel } from '../model/item.model.js'
 import { CategoryModel } from '../model/category.model.js'
 import { MarketplaceModel } from '../model/marketplace.model.js'
@@ -45,6 +46,7 @@ function toItemModel(r: DbItem): ItemModel {
 }
 
 export const useItemsStore = defineStore('items', () => {
+    const toast = useToastStore()
     const loading = ref<boolean>(false)
     const items = reactive<ItemModel[]>([])
 
@@ -69,79 +71,101 @@ export const useItemsStore = defineStore('items', () => {
             items.push(...(data as DbItem[]).map(toItemModel))
         } catch (error) {
             console.error(error)
+            toast.show('Failed to load items. Please try again.', 'error')
         } finally {
             loading.value = false
         }
     }
 
     async function addItem(item: ItemModel): Promise<void> {
-        const { data, error } = await supabase
-            .from('items')
-            .insert({
-                product: item.product.trim(),
-                brand: item.brand?.trim() || null,
-                quantity: item.quantity ?? 1,
-                comments: item.comments?.trim() || null,
-                is_nonessential: item.isNonessential,
-                is_enabled: true,
-                category_id: item.category?.id || null,
-            })
-            .select('id')
-            .single()
+        try {
+            const { data, error } = await supabase
+                .from('items')
+                .insert({
+                    product: item.product.trim(),
+                    brand: item.brand?.trim() || null,
+                    quantity: item.quantity ?? 1,
+                    comments: item.comments?.trim() || null,
+                    is_nonessential: item.isNonessential,
+                    is_enabled: true,
+                    category_id: item.category?.id || null,
+                })
+                .select('id')
+                .single()
 
-        if (error) throw error
+            if (error) throw error
 
-        if (item.marketplacesIds.length > 0) {
-            const { error: mpError } = await supabase
-                .from('item_marketplaces')
-                .insert(item.marketplacesIds.map(mp_id => ({ item_id: data.id, marketplace_id: mp_id })))
-            if (mpError) throw mpError
+            if (item.marketplacesIds.length > 0) {
+                const { error: mpError } = await supabase
+                    .from('item_marketplaces')
+                    .insert(item.marketplacesIds.map(mp_id => ({ item_id: data.id, marketplace_id: mp_id })))
+                if (mpError) throw mpError
+            }
+
+            await fetchItems()
+            toast.show(`${item.product} added to the list.`, 'success')
+        } catch (err) {
+            console.error(err)
+            toast.show('Failed to add item. Please try again.', 'error')
+            throw err
         }
-
-        await fetchItems()
     }
 
     async function updateItem(item: ItemModel): Promise<void> {
-        const { error } = await supabase
-            .from('items')
-            .update({
-                product: item.product.trim(),
-                brand: item.brand?.trim() || null,
-                quantity: item.quantity ?? 1,
-                comments: item.comments?.trim() || null,
-                is_nonessential: item.isNonessential,
-                category_id: item.category?.id || null,
-            })
-            .eq('id', item.id!)
+        try {
+            const { error } = await supabase
+                .from('items')
+                .update({
+                    product: item.product.trim(),
+                    brand: item.brand?.trim() || null,
+                    quantity: item.quantity ?? 1,
+                    comments: item.comments?.trim() || null,
+                    is_nonessential: item.isNonessential,
+                    category_id: item.category?.id || null,
+                })
+                .eq('id', item.id!)
 
-        if (error) throw error
+            if (error) throw error
 
-        const { error: delError } = await supabase
-            .from('item_marketplaces')
-            .delete()
-            .eq('item_id', item.id!)
-
-        if (delError) throw delError
-
-        if (item.marketplacesIds.length > 0) {
-            const { error: mpError } = await supabase
+            const { error: delError } = await supabase
                 .from('item_marketplaces')
-                .insert(item.marketplacesIds.map(mp_id => ({ item_id: item.id!, marketplace_id: mp_id })))
-            if (mpError) throw mpError
-        }
+                .delete()
+                .eq('item_id', item.id!)
 
-        await fetchItems()
+            if (delError) throw delError
+
+            if (item.marketplacesIds.length > 0) {
+                const { error: mpError } = await supabase
+                    .from('item_marketplaces')
+                    .insert(item.marketplacesIds.map(mp_id => ({ item_id: item.id!, marketplace_id: mp_id })))
+                if (mpError) throw mpError
+            }
+
+            await fetchItems()
+            toast.show(`${item.product} updated.`, 'success')
+        } catch (err) {
+            console.error(err)
+            toast.show('Failed to update item. Please try again.', 'error')
+            throw err
+        }
     }
 
     async function deleteItem(item: ItemModel): Promise<void> {
-        const { error } = await supabase
-            .from('items')
-            .update({ is_enabled: false })
-            .eq('id', item.id!)
+        try {
+            const { error } = await supabase
+                .from('items')
+                .update({ is_enabled: false })
+                .eq('id', item.id!)
 
-        if (error) throw error
+            if (error) throw error
 
-        await fetchItems()
+            await fetchItems()
+            toast.show(`${item.product} removed from the list.`, 'success')
+        } catch (err) {
+            console.error(err)
+            toast.show('Failed to remove item. Please try again.', 'error')
+            throw err
+        }
     }
 
     return { fetchItems, addItem, updateItem, deleteItem, items, loading }
