@@ -45,6 +45,8 @@
 - [x] Loading states and skeletons — ImageSkeleton and LoadingSvg rewritten; skeleton grid in MyRecipes; skeleton rows in Basket
 - [x] Register page redesign to match new design system; fixed sign-in redirect
 - [x] Unused components deleted: `BreadCrumbs.vue`, `AddItem.vue`, `ListBox.vue`, `ProductInput.vue`, `AsyncHome.vue`, `Home.vue`
+- [x] Shopping page — vertically centered empty state with link to Gather; "all done" state when everything checked off
+- [x] Recipes page — live search bar + tag filter pills; "no results" empty state with clear-filters link; scalable `filteredRecipes` computed ready for pagination
 
 ---
 
