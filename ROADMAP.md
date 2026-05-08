@@ -62,11 +62,12 @@
   - [ ] Delete / disable recipe (soft delete)
   - [ ] Recipe list management view (enable/disable toggle, edit button)
 - [ ] **Marketplace CRUD**
-  - [ ] Add marketplace form — name
-  - [ ] Edit marketplace name
-  - [ ] Delete marketplace (with guard if items are linked)
-  - [ ] Marketplace list management view
-- [ ] **Admin routing** — gate management pages behind auth; add entry point from Account page
+  - [x] Add marketplace form — name
+  - [x] Edit marketplace name inline
+  - [x] Delete marketplace with inline confirm (warns if items are linked)
+  - [x] Enable/disable toggle (soft-hides from Shopping filter)
+  - [x] Marketplace list management view with item counts
+- [x] **Admin routing** — `/admin/marketplaces`; existing auth guard protects all routes; entry point in Account page
 - [ ] **Supabase RLS** — ensure write policies are locked to authenticated users only
 
 ---
