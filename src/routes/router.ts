@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { supabase } from '../supabase/client.js'
 
 import Register from '../pages/Register.vue'
+import SetPassword from '../pages/SetPassword.vue'
 import Shopping from '../pages/Shopping.vue'
 import Basket from '../pages/Basket.vue'
 import Recipes from '../pages/MyRecipes.vue'
@@ -23,6 +24,11 @@ const router = createRouter({
             path: '/register',
             component: Register,
             name: 'register',
+        },
+        {
+            path: '/set-password',
+            component: SetPassword,
+            name: 'set-password',
         },
         {
             path: '/shopping',
@@ -77,11 +83,25 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
+    // Read hash synchronously before getSession() — Supabase clears it during token exchange
+    const hashType = new URLSearchParams(window.location.hash.slice(1)).get('type')
+    const isSetupFlow = hashType === 'invite' || hashType === 'recovery'
+
     const { data: { session } } = await supabase.auth.getSession()
     const isAuthenticated = !!session
 
+    // Invite or password-recovery links: redirect to the set-password page
+    if (isAuthenticated && isSetupFlow && to.name !== 'set-password') {
+        return next({ name: 'set-password' })
+    }
+
     if (to.name === 'register') {
         return isAuthenticated ? next({ name: 'shopping' }) : next()
+    }
+
+    // set-password requires an active session (the invite link provides one)
+    if (to.name === 'set-password') {
+        return isAuthenticated ? next() : next({ name: 'register' })
     }
 
     isAuthenticated ? next() : next({ name: 'register' })
