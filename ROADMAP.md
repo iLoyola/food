@@ -50,7 +50,7 @@
 
 ---
 
-## Phase 4 — Content Management (Recipes & Marketplaces) ← NEXT
+## Phase 4 — Content Management (Recipes & Marketplaces) ✓ COMPLETE
 - [x] **Recipe CRUD**
   - [x] Add recipe form — name, alias, description, tags, title position
   - [x] Ingredients editor — add/remove/reorder rows (quantity, volume, ingredient, process, extra)
@@ -72,7 +72,7 @@
 
 ---
 
-## Phase 5 — Voice Assistant Integration
+## Phase 5 — Voice Assistant Integration ✓ COMPLETE
 - [x] Design voice command structure
   - "Add [item] to my shopping list"
   - "What's on my shopping list"
@@ -82,16 +82,29 @@
   - API key auth (x-api-key header or ?key= query param)
   - Exact + partial item name matching (case-insensitive)
   - Deployed to Prod with --no-verify-jwt
-- [ ] **iOS (Siri)** — iOS Shortcut calling Edge Function; "Hey Siri, add [item] to my list"
-- [ ] **Google Home + Android** — IFTTT applet bridging Google Assistant to Edge Function webhook
-- [ ] Test end to end on all devices (iPhone, Google Home, Android)
+- [x] **iOS (Siri)** — iOS Shortcut calling Edge Function; fully working with spoken feedback
+- [x] **Google Home speaker** — 10 IFTTT "Activate scene" applets wired to Edge Function; phrase "Hey Google, activate add [item]"
+- [x] Test end to end — iOS confirmed working; Google Home speaker confirmed working
+- [ ] **Android (wife) — deferred** — Tasker + AutoVoice upgrade path available if IFTTT scenes aren't sufficient
 
 > Note: Google Conversational Actions were shut down June 2023. Integration uses
-> Supabase Edge Function + iOS Shortcuts (iPhone) + IFTTT (Google Home / Android).
+> Supabase Edge Function + iOS Shortcuts (iPhone) + IFTTT scenes (Google Home / Android).
 
 ---
 
-## Phase 6 — Testing & Launch
+## Phase 5.5 — Shopping UX Polish ✓ COMPLETE
+- [x] Persistent "Purchased" action bar — slides up when items are checked; batch marks as purchased in one tap
+- [x] Purchased button styled with damask accent colour
+- [x] Marketplace name shown per item in shopping list (right-aligned)
+- [x] Sticky marketplace filter pills + item count — stays visible while scrolling the list
+- [x] Autocomplete shows previously purchased (disabled) items — `knownItems` fetches all regardless of `is_enabled`
+- [x] Change password form on Account page
+- [x] PKCE auth flow — fixes invite link pre-scanning issue
+- [x] Auth-event-driven data fetching — fixes marketplace pills not loading on fresh login
+
+---
+
+## Phase 6 — Testing & Launch ← NEXT
 - [ ] Unit tests for components
 - [ ] Integration tests for Supabase queries
 - [ ] End to end testing
