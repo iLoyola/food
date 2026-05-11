@@ -131,12 +131,21 @@ async function justPurchased() {
                                 {{ item.comments }}
                             </p>
                         </div>
-                        <span
-                            v-if="item.isNonessential"
-                            class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-damask-100 text-damask-700"
-                        >
-                            Nice-to-have
-                        </span>
+                        <div class="shrink-0 flex flex-col items-end gap-1">
+                            <span
+                                v-if="item.isNonessential"
+                                class="text-xs px-2 py-0.5 rounded-full bg-damask-100 text-damask-700"
+                            >
+                                Nice-to-have
+                            </span>
+                            <span
+                                v-for="mp in item.marketplaces"
+                                :key="mp.id"
+                                class="text-xs text-gray-400 dark:text-gray-500"
+                            >
+                                {{ mp.name }}
+                            </span>
+                        </div>
                     </button>
 
                     <!-- All items checked -->
