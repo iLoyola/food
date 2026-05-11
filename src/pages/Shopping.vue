@@ -67,35 +67,35 @@ async function justPurchased() {
         <!-- List — items exist -->
         <template v-else>
 
-            <!-- Marketplace filter pills -->
-            <div class="px-4 pt-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
-                <button
-                    @click="marketplacesStore.activeMarket = 'all'"
-                    :class="marketplacesStore.activeMarket === 'all'
-                        ? 'bg-firefly-500 text-white'
-                        : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
-                    class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
-                >
-                    All
-                </button>
-                <button
-                    v-for="mp in sortedMarketplaces"
-                    :key="mp.id"
-                    @click="marketplacesStore.activeMarket = mp.name"
-                    :class="marketplacesStore.activeMarket === mp.name
-                        ? 'bg-firefly-500 text-white'
-                        : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
-                    class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
-                >
-                    {{ mp.name }}
-                </button>
-            </div>
-
-            <!-- Item count -->
-            <div class="px-4 pb-2">
-                <span class="text-xs text-gray-400 dark:text-gray-500">
-                    {{ uncheckedItems.length }} item{{ uncheckedItems.length !== 1 ? 's' : '' }} remaining
-                </span>
+            <!-- Sticky bar: marketplace pills + item count -->
+            <div class="sticky top-14 z-30 bg-gray-50 dark:bg-gray-950">
+                <div class="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
+                    <button
+                        @click="marketplacesStore.activeMarket = 'all'"
+                        :class="marketplacesStore.activeMarket === 'all'
+                            ? 'bg-firefly-500 text-white'
+                            : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
+                        class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                    >
+                        All
+                    </button>
+                    <button
+                        v-for="mp in sortedMarketplaces"
+                        :key="mp.id"
+                        @click="marketplacesStore.activeMarket = mp.name"
+                        :class="marketplacesStore.activeMarket === mp.name
+                            ? 'bg-firefly-500 text-white'
+                            : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
+                        class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
+                    >
+                        {{ mp.name }}
+                    </button>
+                </div>
+                <div class="px-4 pb-2">
+                    <span class="text-xs text-gray-400 dark:text-gray-500">
+                        {{ uncheckedItems.length }} item{{ uncheckedItems.length !== 1 ? 's' : '' }} remaining
+                    </span>
+                </div>
             </div>
 
             <!-- No items for active marketplace filter -->
