@@ -37,7 +37,7 @@ const showSuggestions = ref(false)
 const localSuggestions = computed(() => {
     const q = form.product.trim().toLowerCase()
     if (q.length < 2) return []
-    return itemsStore.items
+    return itemsStore.knownItems
         .filter(item => item.product.toLowerCase().includes(q))
         .slice(0, 5)
 })
@@ -45,7 +45,7 @@ const localSuggestions = computed(() => {
 const catalogSuggestions = computed(() => {
     const q = form.product.trim().toLowerCase()
     if (q.length < 2) return []
-    const localNames = new Set(itemsStore.items.map(i => i.product.toLowerCase()))
+    const localNames = new Set(itemsStore.knownItems.map(i => i.product.toLowerCase()))
     return grocerySuggestions
         .filter(s => s.name.toLowerCase().includes(q) && !localNames.has(s.name.toLowerCase()))
         .slice(0, 5)

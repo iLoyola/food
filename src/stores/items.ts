@@ -49,6 +49,7 @@ export const useItemsStore = defineStore('items', () => {
     const toast = useToastStore()
     const loading = ref<boolean>(false)
     const items = reactive<ItemModel[]>([])
+    const knownItems = reactive<ItemModel[]>([])
     const checkedIds = ref<Set<string>>(new Set())
 
     function toggleChecked(id: string) {
@@ -90,13 +91,15 @@ export const useItemsStore = defineStore('items', () => {
                         marketplaces (*)
                     )
                 `)
-                .eq('is_enabled', true)
                 .order('product')
 
             if (error) throw error
 
+            const all = (data as DbItem[]).map(toItemModel)
+            knownItems.splice(0, knownItems.length)
+            knownItems.push(...all)
             items.splice(0, items.length)
-            items.push(...(data as DbItem[]).map(toItemModel))
+            items.push(...all.filter(i => i.isEnabled))
         } catch (error) {
             console.error(error)
             toast.show('Failed to load items. Please try again.', 'error')
@@ -196,5 +199,5 @@ export const useItemsStore = defineStore('items', () => {
         }
     }
 
-    return { fetchItems, addItem, updateItem, deleteItem, purchaseItems, toggleChecked, clearChecked, items, checkedIds, loading }
+    return { fetchItems, addItem, updateItem, deleteItem, purchaseItems, toggleChecked, clearChecked, items, knownItems, checkedIds, loading }
 })
