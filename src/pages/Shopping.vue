@@ -75,7 +75,7 @@ async function justPurchased() {
                     <button
                         @click="marketplacesStore.activeMarket = 'all'"
                         :class="marketplacesStore.activeMarket === 'all'
-                            ? 'bg-firefly-500 text-white'
+                            ? 'bg-firefly-600 text-white'
                             : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
                         class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
                     >
@@ -86,7 +86,7 @@ async function justPurchased() {
                         :key="mp.id"
                         @click="marketplacesStore.activeMarket = mp.name"
                         :class="marketplacesStore.activeMarket === mp.name
-                            ? 'bg-firefly-500 text-white'
+                            ? 'bg-firefly-600 text-white'
                             : 'bg-gray-100 dark:bg-firefly-900 text-gray-600 dark:text-gray-300'"
                         class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors"
                     >
@@ -118,7 +118,7 @@ async function justPurchased() {
                         @click="itemsStore.toggleChecked(item.id!)"
                         aria-pressed="false"
                         class="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 dark:active:bg-firefly-800 select-none"
-                        :aria-label="`Mark ${item.product} as purchased`"
+                        :aria-label="`Mark ${item.quantity ? `${item.quantity} ` : ''}${item.product} as purchased`"
                     >
                         <div class="shrink-0 w-6 h-6 rounded-full border-2 border-gray-300 dark:border-firefly-600"></div>
                         <div class="flex-1 min-w-0">
