@@ -55,7 +55,7 @@ async function justPurchased() {
                 </svg>
             </div>
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Your list is empty</h2>
-            <p class="text-sm text-gray-400 dark:text-gray-500 mb-6 max-w-xs leading-relaxed">
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-xs leading-relaxed">
                 Head over to Gather to start adding items to your shopping list.
             </p>
             <router-link
@@ -103,7 +103,7 @@ async function justPurchased() {
             <!-- No items for active marketplace filter -->
             <div
                 v-if="filteredItems.length === 0"
-                class="mx-4 rounded-2xl bg-white dark:bg-firefly-900 px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500"
+                class="mx-4 rounded-2xl bg-white dark:bg-firefly-900 px-4 py-8 text-center text-sm text-gray-600 dark:text-gray-400"
             >
                 No items at this marketplace.
             </div>
@@ -116,8 +116,9 @@ async function justPurchased() {
                         :key="item.id"
                         type="button"
                         @click="itemsStore.toggleChecked(item.id!)"
+                        aria-pressed="false"
                         class="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 dark:active:bg-firefly-800 select-none"
-                        :aria-label="`Mark ${item.product} as done`"
+                        :aria-label="`Mark ${item.product} as purchased`"
                     >
                         <div class="shrink-0 w-6 h-6 rounded-full border-2 border-gray-300 dark:border-firefly-600"></div>
                         <div class="flex-1 min-w-0">
@@ -125,11 +126,11 @@ async function justPurchased() {
                                 <span class="font-medium text-gray-900 dark:text-white">
                                     {{ item.quantity ? `${item.quantity} ` : '' }}{{ item.product }}
                                 </span>
-                                <span v-if="item.brand" class="text-sm text-gray-500 dark:text-gray-400">
+                                <span v-if="item.brand" class="text-sm text-gray-600 dark:text-gray-400">
                                     {{ item.brand }}
                                 </span>
                             </div>
-                            <p v-if="item.comments" class="text-sm text-gray-400 dark:text-gray-500 truncate">
+                            <p v-if="item.comments" class="text-sm text-gray-600 dark:text-gray-400 truncate">
                                 {{ item.comments }}
                             </p>
                         </div>
@@ -143,7 +144,7 @@ async function justPurchased() {
                             <span
                                 v-for="mp in item.marketplaces"
                                 :key="mp.id"
-                                class="text-xs text-gray-400 dark:text-gray-500"
+                                class="text-xs text-gray-600 dark:text-gray-400"
                             >
                                 {{ mp.name }}
                             </span>
@@ -153,7 +154,7 @@ async function justPurchased() {
                     <!-- All items checked -->
                     <div
                         v-if="uncheckedItems.length === 0"
-                        class="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-500"
+                        class="px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400"
                     >
                         All done — everything's checked off.
                     </div>
@@ -162,7 +163,7 @@ async function justPurchased() {
                 <!-- Checked items -->
                 <div v-if="checkedItems.length > 0" class="mx-4 mt-3 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
                     <div class="px-4 py-2">
-                        <span class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+                        <span class="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                             Checked off
                         </span>
                     </div>
@@ -171,15 +172,16 @@ async function justPurchased() {
                         :key="item.id"
                         type="button"
                         @click="itemsStore.toggleChecked(item.id!)"
+                        aria-pressed="true"
                         class="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-gray-50 dark:active:bg-firefly-800 select-none"
-                        :aria-label="`Mark ${item.product} as not done`"
+                        :aria-label="`Mark ${item.product} as not purchased`"
                     >
                         <div class="shrink-0 w-6 h-6 rounded-full bg-firefly-500 flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 text-white" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <span class="flex-1 text-gray-400 dark:text-gray-600 line-through text-sm">
+                        <span class="flex-1 text-gray-500 dark:text-gray-400 line-through text-sm">
                             {{ item.product }}
                         </span>
                     </button>

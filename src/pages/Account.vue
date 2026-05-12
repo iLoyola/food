@@ -11,7 +11,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-900 dark:text-white">{{ authStore.user?.email }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Signed in</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Signed in</p>
                 </div>
             </div>
 
@@ -72,7 +72,7 @@
         <!-- Admin -->
         <div class="mt-6 bg-white dark:bg-firefly-900 rounded-2xl divide-y divide-gray-100 dark:divide-firefly-800">
             <div class="px-4 py-3">
-                <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Admin</p>
+                <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-widest">Admin</p>
             </div>
             <router-link
                 to="/admin/marketplaces"

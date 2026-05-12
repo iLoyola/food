@@ -225,7 +225,7 @@ function resetForm() {
         <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Gather</h1>
 
         <!-- Item list -->
-        <h2 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2 px-1">
+        <h2 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2 px-1">
             Items ({{ itemsStore.items.length }})
         </h2>
 
@@ -239,7 +239,7 @@ function resetForm() {
             </div>
             <div
                 v-else-if="itemsStore.items.length === 0"
-                class="px-4 py-6 text-center text-sm text-gray-400 dark:text-gray-500"
+                class="px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400"
             >
                 No items yet. Add one below.
             </div>
@@ -255,7 +255,7 @@ function resetForm() {
             >
                 <div class="flex-1 min-w-0">
                     <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ item.product }}</p>
-                    <p class="text-xs text-gray-400 dark:text-gray-500 truncate">
+                    <p class="text-xs text-gray-600 dark:text-gray-400 truncate">
                         {{ item.marketplaces.map(m => m.name).join(', ') || 'No marketplaces' }}
                     </p>
                 </div>
@@ -306,7 +306,7 @@ function resetForm() {
                     <!-- Your list -->
                     <template v-if="localSuggestions.length > 0">
                         <div class="px-3 pt-2 pb-1">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Your list</span>
+                            <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Your list</span>
                         </div>
                         <button
                             v-for="(s, i) in localSuggestions"
@@ -317,7 +317,7 @@ function resetForm() {
                             class="w-full flex items-center gap-2 px-4 py-2 text-left transition-colors"
                         >
                             <span class="flex-1 text-sm font-medium text-gray-900 dark:text-white">{{ s.product }}</span>
-                            <span class="text-xs text-gray-400 dark:text-gray-500 truncate max-w-[140px]">
+                            <span class="text-xs text-gray-600 dark:text-gray-400 truncate max-w-[140px]">
                                 {{ s.marketplaces.map(m => m.name).join(', ') }}
                             </span>
                         </button>
@@ -326,7 +326,7 @@ function resetForm() {
                     <!-- Catalog -->
                     <template v-if="catalogSuggestions.length > 0">
                         <div class="px-3 pt-2 pb-1" :class="localSuggestions.length > 0 ? 'border-t border-gray-100 dark:border-firefly-700' : ''">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Catalog</span>
+                            <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Catalog</span>
                         </div>
                         <button
                             v-for="(s, i) in catalogSuggestions"
@@ -337,7 +337,7 @@ function resetForm() {
                             class="w-full flex items-center gap-2 px-4 py-2 text-left transition-colors"
                         >
                             <span class="flex-1 text-sm text-gray-700 dark:text-gray-300">{{ s.name }}</span>
-                            <span class="text-xs text-gray-400 dark:text-gray-500">{{ s.category }}</span>
+                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ s.category }}</span>
                         </button>
                     </template>
                 </div>
@@ -434,7 +434,7 @@ function resetForm() {
             <div class="mb-6 flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Nice-to-have</p>
-                    <p class="text-xs text-gray-400 dark:text-gray-500">Only buy if on sale or budget allows</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Only buy if on sale or budget allows</p>
                 </div>
                 <button
                     type="button"

@@ -109,7 +109,7 @@ async function submit() {
             </div>
 
             <!-- Toggle mode -->
-            <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-5">
+            <p class="text-center text-sm text-gray-600 dark:text-gray-400 mt-5">
                 {{ isSignIn ? "Don't have an account?" : 'Already have an account?' }}
                 <button @click="toggleMode" class="text-damask-500 hover:underline ml-1 font-medium">
                     {{ isSignIn ? 'Create one' : 'Sign in instead' }}
