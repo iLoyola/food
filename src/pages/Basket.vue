@@ -33,6 +33,7 @@ const errors = reactive({ product: '', quantity: '', marketplaces: '' })
 // --- Autocomplete ---
 
 const showSuggestions = ref(false)
+const activeIndex = ref(-1)
 
 const localSuggestions = computed(() => {
     const q = form.product.trim().toLowerCase()
@@ -55,19 +56,50 @@ const hasSuggestions = computed(() =>
     localSuggestions.value.length > 0 || catalogSuggestions.value.length > 0
 )
 
+const totalSuggestions = computed(() =>
+    localSuggestions.value.length + catalogSuggestions.value.length
+)
+
 function onProductInput() {
     showSuggestions.value = true
     isEditing.value = false
     form.id = undefined
+    activeIndex.value = -1
 }
 
 function onProductBlur() {
-    setTimeout(() => { showSuggestions.value = false }, 150)
+    setTimeout(() => { showSuggestions.value = false; activeIndex.value = -1 }, 150)
+}
+
+function onProductKeydown(e: KeyboardEvent) {
+    if (!showSuggestions.value || !hasSuggestions.value) return
+    if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        activeIndex.value = activeIndex.value < totalSuggestions.value - 1 ? activeIndex.value + 1 : 0
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        activeIndex.value = activeIndex.value > 0 ? activeIndex.value - 1 : totalSuggestions.value - 1
+    } else if (e.key === 'Enter' && activeIndex.value >= 0) {
+        e.preventDefault()
+        const localLen = localSuggestions.value.length
+        if (activeIndex.value < localLen) {
+            selectSuggestion(localSuggestions.value[activeIndex.value])
+        } else {
+            const s = catalogSuggestions.value[activeIndex.value - localLen]
+            form.product = s.name
+            showSuggestions.value = false
+            activeIndex.value = -1
+        }
+    } else if (e.key === 'Escape') {
+        showSuggestions.value = false
+        activeIndex.value = -1
+    }
 }
 
 function selectSuggestion(item: ItemModel) {
     loadItem(item)
     showSuggestions.value = false
+    activeIndex.value = -1
 }
 
 // --- Item list ---
@@ -254,9 +286,13 @@ function resetForm() {
                     v-model="form.product"
                     @input="onProductInput"
                     @blur="onProductBlur"
+                    @keydown="onProductKeydown"
                     type="text"
                     autocomplete="off"
                     placeholder="e.g. Whole Milk"
+                    role="combobox"
+                    :aria-expanded="showSuggestions && hasSuggestions"
+                    aria-autocomplete="list"
                     class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
                     :class="errors.product ? 'border-red-400 focus:ring-red-300' : ''"
                 />
@@ -271,11 +307,12 @@ function resetForm() {
                             <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Your list</span>
                         </div>
                         <button
-                            v-for="s in localSuggestions"
+                            v-for="(s, i) in localSuggestions"
                             :key="s.id"
                             type="button"
                             @mousedown.prevent="selectSuggestion(s)"
-                            class="w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-firefly-700 transition-colors"
+                            :class="activeIndex === i ? 'bg-firefly-50 dark:bg-firefly-700' : 'hover:bg-gray-50 dark:hover:bg-firefly-700'"
+                            class="w-full flex items-center gap-2 px-4 py-2 text-left transition-colors"
                         >
                             <span class="flex-1 text-sm font-medium text-gray-900 dark:text-white">{{ s.product }}</span>
                             <span class="text-xs text-gray-400 dark:text-gray-500 truncate max-w-[140px]">
@@ -290,11 +327,12 @@ function resetForm() {
                             <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Catalog</span>
                         </div>
                         <button
-                            v-for="s in catalogSuggestions"
+                            v-for="(s, i) in catalogSuggestions"
                             :key="s.name"
                             type="button"
-                            @mousedown.prevent="form.product = s.name; showSuggestions = false"
-                            class="w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-firefly-700 transition-colors"
+                            @mousedown.prevent="form.product = s.name; showSuggestions = false; activeIndex = -1"
+                            :class="activeIndex === localSuggestions.length + i ? 'bg-firefly-50 dark:bg-firefly-700' : 'hover:bg-gray-50 dark:hover:bg-firefly-700'"
+                            class="w-full flex items-center gap-2 px-4 py-2 text-left transition-colors"
                         >
                             <span class="flex-1 text-sm text-gray-700 dark:text-gray-300">{{ s.name }}</span>
                             <span class="text-xs text-gray-400 dark:text-gray-500">{{ s.category }}</span>
