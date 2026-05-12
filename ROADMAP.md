@@ -108,10 +108,10 @@
 - [ ] Unit tests for components
 - [ ] Integration tests for Supabase queries
 - [ ] End to end testing
-- [ ] Performance audit (Lighthouse)
+- [x] Performance audit (Lighthouse) — 98 Perf / 98 Accessibility / 100 Best Practices / 100 SEO
 - [x] Deploy to Netlify (auto-deploy via GitHub)
-- [ ] DNS / domain setup
-- [ ] Smoke test on production
+- [x] DNS / domain setup — food.iloyola.com live
+- [x] Smoke test on production
 
 ---
 
