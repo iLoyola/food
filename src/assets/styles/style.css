@@ -9,7 +9,7 @@
 
     html, body {
         overscroll-behavior: none;
-        overflow-x: hidden;
+        overflow-x: clip;
         -webkit-overflow-scrolling: touch;
     }
 }
