@@ -105,8 +105,8 @@
 ---
 
 ## Phase 6 — Testing & Launch ← NEXT
-- [ ] Unit tests for components
-- [ ] Integration tests for Supabase queries
+- [x] Unit tests for components — 39 tests (toast store, items store, FullAlerts, BottomNav, Notifications)
+- [x] Integration tests for Supabase queries — 30 tests (fetchItems/purchaseItems, fetchMarketplaces/add/enable/delete)
 - [ ] End to end testing
 - [x] Performance audit (Lighthouse) — 98 Perf / 98 Accessibility / 100 Best Practices / 100 SEO
 - [x] Deploy to Netlify (auto-deploy via GitHub)
