@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
 import FullAlerts from '../components/FullAlerts.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
+
+onMounted(() => { document.title = 'Sign In | iLoyola' })
 
 const email = ref('')
 const password = ref('')

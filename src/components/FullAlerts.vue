@@ -16,6 +16,8 @@ defineProps<{
             'bg-damask-100 text-damask-700 dark:bg-damask-900 dark:text-damask-300': type === 'warning',
         }"
         role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
     >
         <svg v-if="type === 'success'" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />

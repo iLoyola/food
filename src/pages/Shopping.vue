@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useItemsStore } from '../stores/items.js'
 import { useMarketplacesStore } from '../stores/marketplaces.js'
 
@@ -7,6 +7,8 @@ const marketplacesStore = useMarketplacesStore()
 const itemsStore = useItemsStore()
 
 const purchasing = ref(false)
+
+onMounted(() => { document.title = 'Shopping | iLoyola' })
 
 const sortedMarketplaces = computed(() =>
     [...marketplacesStore.marketplaces].sort((a, b) => a.name.localeCompare(b.name))
@@ -92,7 +94,7 @@ async function justPurchased() {
                     </button>
                 </div>
                 <div class="px-4 pb-2">
-                    <span class="text-xs text-gray-400 dark:text-gray-500">
+                    <span aria-live="polite" aria-atomic="true" class="text-xs text-gray-500 dark:text-gray-400">
                         {{ uncheckedItems.length }} item{{ uncheckedItems.length !== 1 ? 's' : '' }} remaining
                     </span>
                 </div>

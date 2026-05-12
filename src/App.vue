@@ -34,8 +34,14 @@ supabase.auth.onAuthStateChange((event, session) => {
 
 <template>
     <div class="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-firefly-600 focus:text-white focus:text-sm focus:font-medium focus:shadow-lg"
+        >
+            Skip to main content
+        </a>
         <Header />
-        <main class="flex-1 pb-20">
+        <main id="main-content" class="flex-1 pb-20">
             <router-view />
         </main>
         <BottomNav v-if="authStore.user" />

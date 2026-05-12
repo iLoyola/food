@@ -13,13 +13,29 @@
         -webkit-overflow-scrolling: touch;
     }
 
-    button:focus-visible,
+    /* ── Focus States ─────────────────────────────────────────────────────────
+       WCAG 2.2 AA — 2.4.7 Focus Visible, 2.4.11 Focus Appearance
+       3px outline + 3px offset on all interactive elements (keyboard only).
+       Outline follows the element's own border-radius natively in modern browsers.
+       Inputs keep their own ring styling via Tailwind classes.
+    ───────────────────────────────────────────────────────────────────────── */
     a:focus-visible,
+    button:focus-visible,
     [role="button"]:focus-visible,
-    [role="switch"]:focus-visible {
-        outline: 2px solid #4cb5c4;
-        outline-offset: 2px;
-        border-radius: 0.375rem;
+    [role="switch"]:focus-visible,
+    [role="tab"]:focus-visible,
+    [role="option"]:focus-visible {
+        outline: 3px solid #2b7d8f; /* firefly-600 */
+        outline-offset: 3px;
+    }
+
+    .dark a:focus-visible,
+    .dark button:focus-visible,
+    .dark [role="button"]:focus-visible,
+    .dark [role="switch"]:focus-visible,
+    .dark [role="tab"]:focus-visible,
+    .dark [role="option"]:focus-visible {
+        outline-color: #85d2db; /* firefly-300 */
     }
 }
 

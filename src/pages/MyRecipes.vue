@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRecipesStore } from '../stores/recipes.js'
 import ImageSkeleton from '../components/ImageSkeleton.vue'
 
 const router = useRouter()
 const recipesStore = useRecipesStore()
+
+onMounted(() => { document.title = 'Recipes | iLoyola' })
 
 const search = ref('')
 const selectedTag = ref<string | null>(null)

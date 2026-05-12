@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useItemsStore } from '../stores/items.js'
 import { useMarketplacesStore } from '../stores/marketplaces.js'
 import { ItemModel } from '../model/item.model.js'
@@ -7,6 +7,8 @@ import grocerySuggestions from '../data/grocery-suggestions.json'
 
 const itemsStore = useItemsStore()
 const marketplacesStore = useMarketplacesStore()
+
+onMounted(() => { document.title = 'Gather | iLoyola' })
 
 // --- Form state ---
 
@@ -351,6 +353,7 @@ function resetForm() {
                     <button
                         type="button"
                         @click="decrementQty"
+                        aria-label="Decrease quantity"
                         class="w-9 h-9 rounded-full bg-gray-100 dark:bg-firefly-800 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-firefly-700 transition-colors"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -366,6 +369,7 @@ function resetForm() {
                     <button
                         type="button"
                         @click="incrementQty"
+                        aria-label="Increase quantity"
                         class="w-9 h-9 rounded-full bg-gray-100 dark:bg-firefly-800 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-firefly-700 transition-colors"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">

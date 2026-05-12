@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../supabase/client.js'
 import FullAlerts from '../components/FullAlerts.vue'
 
 const router = useRouter()
+
+onMounted(() => { document.title = 'Set Password | iLoyola' })
+
 const password = ref('')
 const confirm = ref('')
 const loading = ref(false)

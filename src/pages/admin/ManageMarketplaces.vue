@@ -136,14 +136,16 @@ async function executeDelete(id: string) {
                     <!-- Enable / disable toggle -->
                     <button
                         type="button"
+                        role="switch"
+                        :aria-checked="mp.isEnabled"
                         @click="store.setMarketplaceEnabled(mp.id, !mp.isEnabled)"
                         :class="mp.isEnabled ? 'bg-firefly-500' : 'bg-gray-200 dark:bg-firefly-700'"
-                        class="relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-firefly-400 focus:ring-offset-2"
+                        class="relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors"
                         :aria-label="mp.isEnabled ? 'Disable marketplace' : 'Enable marketplace'"
                     >
                         <span
-                            :class="mp.isEnabled ? 'translate-x-4' : 'translate-x-0.5'"
-                            class="inline-block h-4 w-4 mt-0.5 rounded-full bg-white shadow transform transition-transform"
+                            :class="mp.isEnabled ? 'translate-x-5' : 'translate-x-0.5'"
+                            class="inline-block h-5 w-5 mt-0.5 rounded-full bg-white shadow transform transition-transform"
                         />
                     </button>
 

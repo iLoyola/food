@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth.js'
 import { supabase } from '../supabase/client.js'
@@ -129,6 +129,8 @@ import FullAlerts from '../components/FullAlerts.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+
+onMounted(() => { document.title = 'Account | iLoyola' })
 
 const showPasswordForm = ref(false)
 const newPassword = ref('')
