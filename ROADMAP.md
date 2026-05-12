@@ -107,7 +107,7 @@
 ## Phase 6 — Testing & Launch ← NEXT
 - [x] Unit tests for components — 39 tests (toast store, items store, FullAlerts, BottomNav, Notifications)
 - [x] Integration tests for Supabase queries — 30 tests (fetchItems/purchaseItems, fetchMarketplaces/add/enable/delete)
-- [ ] End to end testing
+- [x] End to end testing — 33 Playwright tests (auth flow, shopping interactions, navigation)
 - [x] Performance audit (Lighthouse) — 98 Perf / 98 Accessibility / 100 Best Practices / 100 SEO
 - [x] Deploy to Netlify (auto-deploy via GitHub)
 - [x] DNS / domain setup — food.iloyola.com live
