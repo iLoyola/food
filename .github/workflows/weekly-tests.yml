@@ -1,0 +1,111 @@
+name: Weekly Test Report
+
+on:
+  schedule:
+    # Every Monday at 8:00 AM UTC (4am EDT / 1am PDT)
+    # Adjust the hour to taste — https://crontab.guru
+    - cron: '0 8 * * 1'
+  # Also lets you trigger it manually from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest
+
+    env:
+      # Supabase env vars are needed to start the Vite dev server.
+      # All network calls are mocked in tests so the real values are fine here —
+      # the publishable key is already public (it's in the client bundle).
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # ── Unit + integration tests ──────────────────────────────────────────
+      - name: Run unit & integration tests (Vitest)
+        id: vitest
+        continue-on-error: true
+        run: npx vitest run 2>&1 | tee vitest.log
+
+      # ── End-to-end tests ──────────────────────────────────────────────────
+      - name: Run E2E tests (Playwright)
+        id: playwright
+        continue-on-error: true
+        run: npx playwright test 2>&1 | tee playwright.log
+
+      # ── Build email body ──────────────────────────────────────────────────
+      - name: Build email body
+        id: email
+        if: always()
+        run: |
+          VITEST_OK="${{ steps.vitest.outcome == 'success' }}"
+          PW_OK="${{ steps.playwright.outcome == 'success' }}"
+
+          if [ "$VITEST_OK" = "true" ] && [ "$PW_OK" = "true" ]; then
+            OVERALL="All tests passing"
+          else
+            OVERALL="Failures detected"
+          fi
+
+          VITEST_ICON=$([ "$VITEST_OK" = "true" ] && echo "PASS" || echo "FAIL")
+          PW_ICON=$([ "$PW_OK" = "true" ] && echo "PASS" || echo "FAIL")
+
+          # Pull the summary lines out of each log
+          VITEST_SUMMARY=$(grep -E "Tests|Test Files|Duration" vitest.log | tail -4 | sed 's/^[[:space:]]*//' | tr '\n' ' | ')
+          PW_SUMMARY=$(grep -E "passed|failed|skipped" playwright.log | tail -3 | sed 's/^[[:space:]]*//' | tr '\n' ' | ')
+
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          DATE=$(date '+%Y-%m-%d')
+
+          cat > email_body.txt <<BODY
+          iLoyola Food — Weekly Test Report
+          $DATE | $OVERALL
+
+          ──────────────────────────────────────
+          Unit + Integration Tests  [$VITEST_ICON]
+          ──────────────────────────────────────
+          $VITEST_SUMMARY
+
+          ──────────────────────────────────────
+          End-to-End Tests (Playwright)  [$PW_ICON]
+          ──────────────────────────────────────
+          $PW_SUMMARY
+
+          Full run log:
+          $RUN_URL
+          BODY
+
+          # Export for the next step (multiline-safe)
+          {
+            echo "subject=iLoyola Food — Weekly Tests ($OVERALL) $DATE"
+            echo "body<<EOF"
+            cat email_body.txt
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      # ── Send email ────────────────────────────────────────────────────────
+      - name: Send test report email
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SMTP_HOST }}
+          server_port: ${{ secrets.MAIL_SMTP_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: ${{ steps.email.outputs.subject }}
+          to: ivan@iloyola.com
+          from: iLoyola Tests <${{ secrets.MAIL_USERNAME }}>
+          body: ${{ steps.email.outputs.body }}
