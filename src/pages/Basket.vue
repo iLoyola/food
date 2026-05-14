@@ -29,6 +29,7 @@ function emptyForm() {
 
 const form = reactive(emptyForm())
 const isEditing = ref(false)
+const wasDisabled = ref(false)
 const saving = ref(false)
 const errors = reactive({ product: '', quantity: '', marketplaces: '' })
 
@@ -125,9 +126,10 @@ function loadItem(item: ItemModel) {
         marketplacesIds: [...item.marketplacesIds],
         category: { ...item.category },
         marketplaces: [...item.marketplaces],
-        isEnabled: item.isEnabled,
+        isEnabled: true,
     })
     isEditing.value = true
+    wasDisabled.value = !item.isEnabled
     errors.product = ''
     errors.quantity = ''
     errors.marketplaces = ''
@@ -213,6 +215,7 @@ async function deleteCurrentItem() {
 function resetForm() {
     Object.assign(form, emptyForm())
     isEditing.value = false
+    wasDisabled.value = false
     errors.product = ''
     errors.quantity = ''
     errors.marketplaces = ''
@@ -449,6 +452,17 @@ function resetForm() {
                         class="inline-block h-5 w-5 mt-0.5 rounded-full bg-white shadow transform transition-transform"
                     />
                 </button>
+            </div>
+
+            <!-- Re-add notice -->
+            <div
+                v-if="wasDisabled"
+                class="mb-4 flex items-start gap-2 rounded-xl bg-damask-50 dark:bg-damask-900/20 border border-damask-200 dark:border-damask-800 px-4 py-3 text-sm text-damask-700 dark:text-damask-300"
+            >
+                <svg class="shrink-0 w-4 h-4 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z" />
+                </svg>
+                <span>This item was previously purchased. Saving will re-add it to your shopping list.</span>
             </div>
 
             <!-- Buttons -->

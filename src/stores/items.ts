@@ -152,6 +152,7 @@ export const useItemsStore = defineStore('items', () => {
                     quantity: item.quantity ?? 1,
                     comments: item.comments?.trim() || null,
                     is_nonessential: item.isNonessential,
+                    is_enabled: item.isEnabled,
                     category_id: item.category?.id || null,
                 })
                 .eq('id', item.id!)

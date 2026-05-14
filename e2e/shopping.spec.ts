@@ -19,10 +19,12 @@ test.describe('Shopping page', () => {
         await expect(authedPage.getByText(`${TEST_ITEMS.length} items remaining`)).toBeVisible()
     })
 
-    test('shows marketplace filter pills', async ({ authedPage }) => {
-        await expect(authedPage.getByRole('button', { name: 'All' })).toBeVisible()
-        await expect(authedPage.getByRole('button', { name: 'Costco' })).toBeVisible()
-        await expect(authedPage.getByRole('button', { name: 'T&T' })).toBeVisible()
+    test('shows marketplace filter select with all options', async ({ authedPage }) => {
+        const select = authedPage.getByLabel('Filter by marketplace')
+        await expect(select).toBeVisible()
+        await expect(select.getByRole('option', { name: 'All marketplaces' })).toBeAttached()
+        await expect(select.getByRole('option', { name: 'Costco' })).toBeAttached()
+        await expect(select.getByRole('option', { name: 'T&T' })).toBeAttached()
     })
 
     test('checking an item moves it to the Checked off section', async ({ authedPage }) => {
@@ -74,7 +76,7 @@ test.describe('Shopping page', () => {
     })
 
     test('Costco filter shows only Costco items', async ({ authedPage }) => {
-        await authedPage.getByRole('button', { name: 'Costco' }).click()
+        await authedPage.getByLabel('Filter by marketplace').selectOption('Costco')
 
         // Apples and Chips are Costco; Milk is T&T
         await expect(authedPage.getByText('Apples')).toBeVisible()
@@ -83,15 +85,15 @@ test.describe('Shopping page', () => {
     })
 
     test('T&T filter shows only T&T items', async ({ authedPage }) => {
-        await authedPage.getByRole('button', { name: 'T&T' }).click()
+        await authedPage.getByLabel('Filter by marketplace').selectOption('T&T')
 
         await expect(authedPage.getByText('Milk')).toBeVisible()
         await expect(authedPage.getByText('Apples')).not.toBeVisible()
     })
 
     test('All filter restores all items after marketplace filter', async ({ authedPage }) => {
-        await authedPage.getByRole('button', { name: 'Costco' }).click()
-        await authedPage.getByRole('button', { name: 'All' }).click()
+        await authedPage.getByLabel('Filter by marketplace').selectOption('Costco')
+        await authedPage.getByLabel('Filter by marketplace').selectOption('All marketplaces')
 
         for (const item of TEST_ITEMS) {
             await expect(authedPage.getByText(item.product)).toBeVisible()
