@@ -107,5 +107,5 @@ jobs:
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: ${{ steps.email.outputs.subject }}
           to: ivan@iloyola.com
-          from: iLoyola Tests <${{ secrets.MAIL_USERNAME }}>
+          from: iLoyola Tests <oversight@iloyola.com>
           body: ${{ steps.email.outputs.body }}
