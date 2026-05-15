@@ -150,6 +150,37 @@ async function justPurchased() {
                     </div>
                 </div>
 
+                <!-- Purchased button — inline so it never overlaps list items -->
+                <Transition
+                    enter-active-class="transition-all duration-300 ease-out"
+                    enter-from-class="opacity-0 -translate-y-2"
+                    enter-to-class="opacity-100 translate-y-0"
+                    leave-active-class="transition-all duration-200 ease-in"
+                    leave-from-class="opacity-100 translate-y-0"
+                    leave-to-class="opacity-0 -translate-y-2"
+                >
+                    <div v-if="allCheckedIds.length > 0" class="mx-4 mt-3">
+                        <button
+                            type="button"
+                            @click="justPurchased"
+                            :disabled="purchasing"
+                            class="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-2xl bg-damask-500 hover:bg-damask-600 text-white shadow-lg shadow-damask-900/20 active:scale-[0.98] transition-transform disabled:opacity-60"
+                        >
+                            <div class="flex items-center gap-2.5">
+                                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                <span class="font-semibold text-sm">
+                                    {{ purchasing ? 'Updating…' : 'Purchased' }}
+                                </span>
+                            </div>
+                            <span class="shrink-0 bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                                {{ allCheckedIds.length }}
+                            </span>
+                        </button>
+                    </div>
+                </Transition>
+
                 <!-- Checked items -->
                 <div v-if="checkedItems.length > 0" class="mx-4 mt-3 rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
                     <div class="px-4 py-2">
@@ -183,40 +214,5 @@ async function justPurchased() {
         <div class="h-4"></div>
     </div>
 
-    <!-- Just Purchased action bar -->
-    <Teleport to="body">
-        <Transition
-            enter-active-class="transition-all duration-300 ease-out"
-            enter-from-class="translate-y-full opacity-0"
-            enter-to-class="translate-y-0 opacity-100"
-            leave-active-class="transition-all duration-200 ease-in"
-            leave-from-class="translate-y-0 opacity-100"
-            leave-to-class="translate-y-full opacity-0"
-        >
-            <div
-                v-if="allCheckedIds.length > 0"
-                class="fixed bottom-16 inset-x-0 z-50 px-4 pb-3 pointer-events-none"
-            >
-                <button
-                    type="button"
-                    @click="justPurchased"
-                    :disabled="purchasing"
-                    class="pointer-events-auto w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-2xl bg-damask-500 hover:bg-damask-600 dark:bg-damask-500 text-white shadow-lg shadow-damask-900/20 active:scale-[0.98] transition-transform disabled:opacity-60"
-                >
-                    <div class="flex items-center gap-2.5">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span class="font-semibold text-sm">
-                            {{ purchasing ? 'Updating…' : 'Purchased' }}
-                        </span>
-                    </div>
-                    <span class="shrink-0 bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                        {{ allCheckedIds.length }}
-                    </span>
-                </button>
-            </div>
-        </Transition>
-    </Teleport>
 </template>
 
