@@ -31,6 +31,7 @@ const form = reactive(emptyForm())
 const isEditing = ref(false)
 const wasDisabled = ref(false)
 const saving = ref(false)
+const activeTab = ref<'add' | 'items'>('add')
 const errors = reactive({ product: '', quantity: '', marketplaces: '' })
 
 // --- Autocomplete ---
@@ -130,10 +131,10 @@ function loadItem(item: ItemModel) {
     })
     isEditing.value = true
     wasDisabled.value = !item.isEnabled
+    activeTab.value = 'add'
     errors.product = ''
     errors.quantity = ''
     errors.marketplaces = ''
-    document.getElementById('basket-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 // --- Marketplace toggle ---
@@ -223,62 +224,87 @@ function resetForm() {
 </script>
 
 <template>
-    <div class="max-w-3xl mx-auto px-4 pt-4 pb-6">
+    <div class="max-w-3xl mx-auto pb-6">
 
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Gather</h1>
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white px-4 pt-4 mb-2">Gather</h1>
 
-        <!-- Item list -->
-        <h2 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2 px-1">
-            Items ({{ itemsStore.items.length }})
-        </h2>
-
-        <div class="rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800 mb-6">
-            <div v-if="itemsStore.loading" class="px-4 py-4 space-y-3">
-                <div
-                    v-for="n in 5"
-                    :key="n"
-                    class="h-10 rounded-xl bg-gray-100 dark:bg-firefly-800 animate-pulse"
-                />
-            </div>
-            <div
-                v-else-if="itemsStore.items.length === 0"
-                class="px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400"
-            >
-                No items yet. Add one below.
-            </div>
-            <button
-                v-for="item in sortedItems"
-                :key="item.id"
-                type="button"
-                @click="loadItem(item)"
-                :class="form.id === item.id
-                    ? 'bg-firefly-50 dark:bg-firefly-800'
-                    : 'hover:bg-gray-50 dark:hover:bg-firefly-800'"
-                class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors"
-            >
-                <div class="flex-1 min-w-0">
-                    <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ item.product }}</p>
-                    <p class="text-xs text-gray-600 dark:text-gray-400 truncate">
-                        {{ item.marketplaces.map(m => m.name).join(', ') || 'No marketplaces' }}
-                    </p>
-                </div>
-                <span
-                    v-if="item.isNonessential"
-                    class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-damask-100 text-damask-700"
+        <!-- Sticky tab bar -->
+        <div class="sticky top-14 z-30 bg-gray-50 dark:bg-gray-950 px-4 pt-1 pb-3">
+            <div class="flex bg-gray-100 dark:bg-firefly-900 rounded-xl p-1">
+                <button
+                    type="button"
+                    @click="activeTab = 'add'"
+                    :class="activeTab === 'add'
+                        ? 'bg-white dark:bg-firefly-700 shadow-sm text-gray-900 dark:text-white'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
+                    class="flex-1 py-2 rounded-lg text-sm font-medium transition-all"
                 >
-                    Nice-to-have
-                </span>
-                <svg class="shrink-0 w-4 h-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-            </button>
+                    {{ isEditing ? 'Editing…' : 'Add item' }}
+                </button>
+                <button
+                    type="button"
+                    @click="activeTab = 'items'"
+                    :class="activeTab === 'items'
+                        ? 'bg-white dark:bg-firefly-700 shadow-sm text-gray-900 dark:text-white'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
+                    class="flex-1 py-2 rounded-lg text-sm font-medium transition-all"
+                >
+                    Items ({{ itemsStore.items.length }})
+                </button>
+            </div>
         </div>
 
-        <!-- Form -->
-        <div id="basket-form" class="bg-white dark:bg-firefly-900 rounded-2xl p-5">
+        <!-- Items tab -->
+        <div v-show="activeTab === 'items'" class="px-4">
+            <div class="rounded-2xl overflow-hidden bg-white dark:bg-firefly-900 divide-y divide-gray-100 dark:divide-firefly-800">
+                <div v-if="itemsStore.loading" class="px-4 py-4 space-y-3">
+                    <div
+                        v-for="n in 5"
+                        :key="n"
+                        class="h-10 rounded-xl bg-gray-100 dark:bg-firefly-800 animate-pulse"
+                    />
+                </div>
+                <div
+                    v-else-if="itemsStore.items.length === 0"
+                    class="px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400"
+                >
+                    No items yet. Switch to Add item to get started.
+                </div>
+                <button
+                    v-for="item in sortedItems"
+                    :key="item.id"
+                    type="button"
+                    @click="loadItem(item)"
+                    :class="form.id === item.id
+                        ? 'bg-firefly-50 dark:bg-firefly-800'
+                        : 'hover:bg-gray-50 dark:hover:bg-firefly-800'"
+                    class="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors"
+                >
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ item.product }}</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 truncate">
+                            {{ item.marketplaces.map(m => m.name).join(', ') || 'No marketplaces' }}
+                        </p>
+                    </div>
+                    <span
+                        v-if="item.isNonessential"
+                        class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-damask-100 text-damask-700"
+                    >
+                        Nice-to-have
+                    </span>
+                    <svg class="shrink-0 w-4 h-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Add tab -->
+        <div v-show="activeTab === 'add'" class="px-4">
+        <div class="bg-white dark:bg-firefly-900 rounded-2xl p-5">
 
             <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-4">
-                {{ isEditing ? `Editing: ${form.product}` : 'Add new item' }}
+                {{ isEditing ? form.product : 'Add new item' }}
             </h2>
 
             <!-- Product -->
@@ -499,5 +525,7 @@ function resetForm() {
                 </button>
             </div>
         </div>
+        </div><!-- /add tab -->
+
     </div>
 </template>
