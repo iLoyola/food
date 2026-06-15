@@ -1,6 +1,6 @@
 import { test as setup } from '@playwright/test'
+import { writeFile } from 'node:fs/promises'
 
-// Where to write the browser storage state after signing in.
 export const AUTH_STATE_FILE = 'e2e/.auth-state.json'
 
 // A properly formatted (but unsigned) JWT. The payload has:
@@ -24,40 +24,45 @@ const MOCK_USER = {
     user_metadata: {},
 }
 
-// This runs once before all tests. It:
-//   1. Mocks the Supabase auth API to accept any credentials
-//   2. Signs in through the real UI
-//   3. Saves the resulting browser storage state (includes the session that
-//      the Supabase JS client wrote to localStorage in its own format)
-setup('authenticate', async ({ page }) => {
-    // Accept any sign-in attempt
-    await page.route('**/auth/v1/**', (route) => {
-        route.fulfill({
-            status: 200,
-            contentType: 'application/json',
-            body: JSON.stringify({
-                access_token: MOCK_TOKEN,
-                token_type: 'bearer',
-                expires_in: 9999999999,
-                expires_at: 9999999999,
-                refresh_token: 'fake-refresh-token',
-                user: MOCK_USER,
-            }),
-        })
-    })
+// The Supabase JS client stores its session under a key derived from the
+// project URL: sb-{project-ref}-auth-token. Derive it from the env var so
+// it always matches what the browser client will look for, regardless of
+// which Supabase project the env points at.
+function storageKey(): string {
+    const url = process.env.VITE_SUPABASE_URL ?? ''
+    try {
+        const ref = new URL(url).hostname.split('.')[0]
+        if (ref) return `sb-${ref}-auth-token`
+    } catch { /* fall through */ }
+    // Fall back to the known project ref so local runs without env still work.
+    return 'sb-bzjsrmvwvbtudurnjyvx-auth-token'
+}
 
-    // Stub data so the Shopping page renders after redirect
-    await page.route('**/rest/v1/**', (route) => {
-        route.fulfill({ status: 200, contentType: 'application/json', body: '[]' })
-    })
+// Write the mock auth state directly — no browser sign-in needed.
+// This is far more reliable in CI than clicking through the UI: it removes
+// the dependency on the sign-in form, the Supabase mock response format,
+// the Vue Router redirect, and Playwright timing.
+setup('authenticate', async () => {
+    const session = {
+        access_token: MOCK_TOKEN,
+        token_type: 'bearer',
+        expires_in: 9999999999,
+        expires_at: 9999999999,
+        refresh_token: 'fake-refresh-token',
+        user: MOCK_USER,
+    }
 
-    await page.goto('/register')
-    await page.getByLabel('Email address').fill('test@example.com')
-    await page.getByLabel('Password').fill('anypassword')
-    await page.getByRole('button', { name: 'Sign in' }).click()
-    await page.waitForURL('**/shopping')
+    const authState = {
+        cookies: [],
+        origins: [
+            {
+                origin: 'http://localhost:5173',
+                localStorage: [
+                    { name: storageKey(), value: JSON.stringify(session) },
+                ],
+            },
+        ],
+    }
 
-    // The Supabase client has now written the session to localStorage in its
-    // own format. Capture the entire browser storage state.
-    await page.context().storageState({ path: AUTH_STATE_FILE })
+    await writeFile(AUTH_STATE_FILE, JSON.stringify(authState, null, 2))
 })
