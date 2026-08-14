@@ -324,7 +324,7 @@ function resetForm() {
                     role="combobox"
                     :aria-expanded="showSuggestions && hasSuggestions"
                     aria-autocomplete="list"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                     :class="errors.product ? 'border-red-400 focus:ring-red-300' : ''"
                 />
                 <!-- Suggestions dropdown -->
@@ -393,7 +393,7 @@ function resetForm() {
                         v-model.number="form.quantity"
                         type="number"
                         min="0"
-                        class="w-16 text-center rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                        class="w-16 text-center rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-2 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                     />
                     <button
                         type="button"
@@ -441,7 +441,7 @@ function resetForm() {
                     v-model="form.brand"
                     type="text"
                     placeholder="e.g. Organic Valley"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                 />
             </div>
 
@@ -455,7 +455,7 @@ function resetForm() {
                     v-model="form.comments"
                     type="text"
                     placeholder="e.g. 2% or higher"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                 />
             </div>
 

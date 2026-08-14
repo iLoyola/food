@@ -221,7 +221,7 @@ async function submit() {
                     v-model="form.name"
                     type="text"
                     placeholder="e.g. Sticky Toffee Pudding"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                     :class="errors.name ? 'border-red-400' : ''"
                 />
                 <p v-if="errors.name" class="mt-1 text-xs text-red-500">{{ errors.name }}</p>
@@ -238,7 +238,7 @@ async function submit() {
                     @input="aliasLocked = true"
                     type="text"
                     placeholder="e.g. sticky-toffee-pudding"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base font-mono focus:outline-none focus:ring-2 focus:ring-firefly-400"
                     :class="errors.alias ? 'border-red-400' : ''"
                 />
                 <p v-if="errors.alias" class="mt-1 text-xs text-red-500">{{ errors.alias }}</p>
@@ -251,7 +251,7 @@ async function submit() {
                     v-model="form.description"
                     rows="3"
                     placeholder="A short description of the recipe…"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400 resize-none"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400 resize-none"
                 />
             </div>
 
@@ -278,7 +278,7 @@ async function submit() {
                     @blur="addTag"
                     type="text"
                     placeholder="Type a tag and press Enter"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                 />
             </div>
 
@@ -288,7 +288,7 @@ async function submit() {
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Card title position</label>
                     <select
                         v-model="form.titlePosition"
-                        class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                        class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                     >
                         <option value="tl">Top left</option>
                         <option value="tr">Top right</option>
@@ -386,7 +386,7 @@ async function submit() {
                         v-model="ing.ingredient"
                         type="text"
                         placeholder="Ingredient"
-                        class="w-full rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400 mb-2"
+                        class="w-full rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400 mb-2"
                     />
 
                     <!-- Qty + Volume + Process + Extra in a grid -->
@@ -396,25 +396,25 @@ async function submit() {
                             type="number"
                             min="0"
                             placeholder="Qty"
-                            class="rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                            class="rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                         />
                         <input
                             v-model="ing.volume"
                             type="text"
                             placeholder="Volume (e.g. cup)"
-                            class="rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                            class="rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                         />
                         <input
                             v-model="ing.process"
                             type="text"
                             placeholder="Process (e.g. chopped)"
-                            class="rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                            class="rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                         />
                         <input
                             v-model="ing.extra"
                             type="text"
                             placeholder="Extra note"
-                            class="rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                            class="rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                         />
                     </div>
                 </div>
@@ -465,7 +465,7 @@ async function submit() {
                         v-model="step.instruction"
                         rows="3"
                         placeholder="Describe this step…"
-                        class="w-full rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400 resize-none"
+                        class="w-full rounded-lg border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400 resize-none"
                     />
                 </div>
             </div>
@@ -492,7 +492,7 @@ async function submit() {
                     v-model="form.notes"
                     rows="3"
                     placeholder="Optional tips, variations, or storage notes…"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400 resize-none"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400 resize-none"
                 />
             </div>
 
@@ -502,7 +502,7 @@ async function submit() {
                     v-model="form.reference"
                     type="url"
                     placeholder="https://example.com/recipe"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                 />
             </div>
         </div>
@@ -521,13 +521,13 @@ async function submit() {
                         v-model="br.name"
                         type="text"
                         placeholder="Recipe name"
-                        class="flex-1 rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                        class="flex-1 rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                     />
                     <input
                         v-model="br.url"
                         type="url"
                         placeholder="URL"
-                        class="flex-1 rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                        class="flex-1 rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
                     />
                     <button type="button" @click="removeBoundRecipe(i)" class="p-1.5 text-gray-400 hover:text-red-500 shrink-0">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">

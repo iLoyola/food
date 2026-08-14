@@ -74,7 +74,7 @@ async function justPurchased() {
                 <div class="px-4 pt-3 pb-2">
                     <select
                         v-model="marketplacesStore.activeMarket"
-                        class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                        class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-firefly-400"
                         aria-label="Filter by marketplace"
                     >
                         <option value="all">All marketplaces</option>

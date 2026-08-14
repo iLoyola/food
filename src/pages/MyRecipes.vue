@@ -79,7 +79,7 @@ function titlePositioning(tp: string) {
                     type="search"
                     placeholder="Search recipes…"
                     aria-label="Search recipes"
-                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-firefly-700 bg-white dark:bg-firefly-900 text-gray-900 dark:text-white text-base placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-firefly-400"
                 />
             </div>
 
