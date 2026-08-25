@@ -132,6 +132,7 @@ function titlePositioning(tp: string) {
                     <button
                         type="button"
                         @click="loadRecipe(recipe.alias)"
+                        :aria-label="recipe.name"
                         class="absolute inset-0 w-full h-full bg-firefly-100 dark:bg-firefly-800"
                     >
                         <img
