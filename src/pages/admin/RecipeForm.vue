@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useRecipesStore } from '../../stores/recipes.js'
+import { useRecipesStore, type RecipeExtraction } from '../../stores/recipes.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -10,6 +10,15 @@ const store = useRecipesStore()
 const isEditing = computed(() => !!route.params.id)
 const saving = ref(false)
 const aliasLocked = ref(false)
+
+// Admin-only reviewer note from AI scanning (recipes.scan_issues) — kept out
+// of `form` entirely since it's not part of the recipe's actual content.
+const scanIssues = ref('')
+
+// ── Entry point: manual vs. scan ─────────────────────────────────────────────
+// Editing an existing recipe skips straight to the form; a new recipe starts
+// at the choice screen. 'scanning' covers the photo-to-parse wait.
+const stage = ref<'choice' | 'scanning' | 'form'>(isEditing.value ? 'form' : 'choice')
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 
@@ -32,7 +41,7 @@ function emptyForm() {
 }
 
 const form = reactive(emptyForm())
-const errors = reactive({ name: '', alias: '' })
+const errors = reactive({ name: '', alias: '', tags: '' })
 
 // ── Image ───────────────────────────────────────────────────────────────────
 
@@ -67,6 +76,48 @@ watch(() => form.name, (name) => {
         form.alias = generateAlias(name)
     }
 })
+
+// ── Scan a recipe ────────────────────────────────────────────────────────────
+
+function readAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = () => reject(reader.error)
+        reader.readAsDataURL(file)
+    })
+}
+
+function applyExtraction(extraction: RecipeExtraction) {
+    form.name = extraction.name || ''
+    form.description = extraction.description || ''
+    form.tags = extraction.tags?.length ? [...extraction.tags] : []
+    form.notes = extraction.notes || '' // only what was actually printed on the page
+    form.ingredients = extraction.ingredients?.length
+        ? extraction.ingredients.map(i => ({ ...i }))
+        : [{ quantity: 0, volume: '', ingredient: '', process: '', extra: '' }]
+    form.steps = extraction.steps?.length
+        ? extraction.steps.map(s => ({ instruction: s.instruction }))
+        : [{ instruction: '' }]
+    form.isEnabled = false // scanned recipes always start as drafts
+    scanIssues.value = extraction.scanIssues || ''
+}
+
+async function onScanPhotoSelect(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0]
+    if (!file) return
+    stage.value = 'scanning'
+    try {
+        const dataUrl = await readAsDataUrl(file)
+        const extraction = await store.parseRecipeImages([dataUrl])
+        applyExtraction(extraction)
+    } catch {
+        // parseRecipeImages already showed an error toast — land on a blank
+        // form so the recipe can still be entered by hand, same as manual entry
+    } finally {
+        stage.value = 'form'
+    }
+}
 
 // ── Tags ────────────────────────────────────────────────────────────────────
 
@@ -146,6 +197,7 @@ onMounted(async () => {
     form.ingredients = recipe.ingredients.map(i => ({ ...i }))
     form.steps = recipe.steps.map(s => ({ instruction: s.instruction }))
     form.boundRecipes = recipe.boundRecipes ? recipe.boundRecipes.map(b => ({ ...b })) : []
+    scanIssues.value = recipe.scanIssues ?? ''
     aliasLocked.value = true
 })
 
@@ -154,7 +206,10 @@ onMounted(async () => {
 function validate(): boolean {
     errors.name = form.name.trim() ? '' : 'Recipe name is required'
     errors.alias = form.alias.trim() ? '' : 'Alias is required'
-    return !errors.name && !errors.alias
+    errors.tags = (!form.isEnabled || form.tags.length > 0)
+        ? ''
+        : 'Add at least one tag before making this recipe visible'
+    return !errors.name && !errors.alias && !errors.tags
 }
 
 async function submit() {
@@ -173,6 +228,7 @@ async function submit() {
             ingredients: form.ingredients.filter(i => i.ingredient.trim()),
             steps: form.steps.filter(s => s.instruction.trim()),
             boundRecipes: form.boundRecipes.filter(b => b.name.trim() && b.url.trim()),
+            scanIssues: scanIssues.value.trim(),
         }
         if (isEditing.value) {
             await store.updateRecipe(route.params.id as string, payload, imageFile.value)
@@ -208,6 +264,72 @@ async function submit() {
             {{ isEditing ? 'Edit recipe' : 'New recipe' }}
         </h1>
 
+        <!-- ── Entry point choice ────────────────────────────────────── -->
+        <div v-if="stage === 'choice'" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+                type="button"
+                @click="stage = 'form'"
+                class="text-left bg-white dark:bg-firefly-900 rounded-2xl p-5 border border-gray-100 dark:border-firefly-800 hover:border-firefly-400 dark:hover:border-firefly-500 transition-colors"
+            >
+                <svg class="w-6 h-6 text-firefly-500 mb-3" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <p class="font-medium text-gray-900 dark:text-white mb-1">Enter manually</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Type in the recipe yourself.</p>
+            </button>
+
+            <label
+                class="text-left bg-white dark:bg-firefly-900 rounded-2xl p-5 border border-gray-100 dark:border-firefly-800 hover:border-firefly-400 dark:hover:border-firefly-500 transition-colors cursor-pointer"
+            >
+                <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    class="sr-only"
+                    @change="onScanPhotoSelect"
+                    @click="($event.target as HTMLInputElement).value = ''"
+                />
+                <svg class="w-6 h-6 text-firefly-500 mb-3" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <p class="font-medium text-gray-900 dark:text-white mb-1">Scan a recipe</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Snap a photo of a cookbook page and we'll fill in the form.</p>
+            </label>
+        </div>
+
+        <!-- ── Scanning ─────────────────────────────────────────────────── -->
+        <div v-else-if="stage === 'scanning'" class="bg-white dark:bg-firefly-900 rounded-2xl p-10 flex flex-col items-center text-center gap-3">
+            <svg class="w-6 h-6 text-firefly-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Reading your recipe…</p>
+        </div>
+
+        <template v-else>
+
+        <!-- ── Scan issues (admin-only, never shown on the public site) ── -->
+        <div
+            v-if="scanIssues.trim()"
+            class="mb-4 flex items-start gap-2 rounded-xl bg-damask-100 dark:bg-damask-900/40 border border-damask-200 dark:border-damask-800 px-4 py-3 text-sm text-damask-800 dark:text-damask-300"
+        >
+            <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+            <div class="flex-1">
+                <p class="font-medium mb-0.5">Scan couldn't read everything</p>
+                <p>{{ scanIssues }}</p>
+            </div>
+            <button
+                type="button"
+                @click="scanIssues = ''"
+                class="shrink-0 text-xs font-medium underline hover:no-underline"
+            >
+                Dismiss
+            </button>
+        </div>
+
         <!-- ── Basic info ─────────────────────────────────────────────── -->
         <div class="bg-white dark:bg-firefly-900 rounded-2xl p-5 mb-4 space-y-4">
             <h2 class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Basic info</h2>
@@ -231,14 +353,17 @@ async function submit() {
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                     Alias <span class="text-red-500">*</span>
-                    <span class="ml-1 text-xs font-normal text-gray-400">(used in URL and image filenames)</span>
+                    <span class="ml-1 text-xs font-normal text-gray-400">
+                        {{ isEditing ? '(locked — used in the URL and image filenames)' : '(used in URL and image filenames)' }}
+                    </span>
                 </label>
                 <input
                     v-model="form.alias"
                     @input="aliasLocked = true"
                     type="text"
+                    :disabled="isEditing"
                     placeholder="e.g. sticky-toffee-pudding"
-                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base font-mono focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base font-mono focus:outline-none focus:ring-2 focus:ring-firefly-400 disabled:opacity-60 disabled:cursor-not-allowed"
                     :class="errors.alias ? 'border-red-400' : ''"
                 />
                 <p v-if="errors.alias" class="mt-1 text-xs text-red-500">{{ errors.alias }}</p>
@@ -279,7 +404,9 @@ async function submit() {
                     type="text"
                     placeholder="Type a tag and press Enter"
                     class="w-full rounded-xl border border-gray-200 dark:border-firefly-700 bg-gray-50 dark:bg-firefly-950 text-gray-900 dark:text-white px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-firefly-400"
+                    :class="errors.tags ? 'border-red-400' : ''"
                 />
+                <p v-if="errors.tags" class="mt-1.5 text-xs text-red-500">{{ errors.tags }}</p>
             </div>
 
             <!-- Title position + Enabled -->
@@ -566,6 +693,8 @@ async function submit() {
                 {{ saving ? 'Saving…' : isEditing ? 'Save changes' : 'Create recipe' }}
             </button>
         </div>
+
+        </template>
 
     </div>
 </template>
