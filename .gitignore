@@ -30,3 +30,6 @@ e2e/.auth-state.json
 *.njsproj
 *.sln
 *.sw?
+
+# Local Netlify folder
+.netlify
