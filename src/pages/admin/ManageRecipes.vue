@@ -92,7 +92,7 @@ async function executeDelete(id: string) {
                         type="button"
                         role="switch"
                         :aria-checked="recipe.isEnabled"
-                        @click.stop="store.toggleRecipeEnabled(recipe.id, !recipe.isEnabled)"
+                        @click.stop.prevent="store.toggleRecipeEnabled(recipe.id, !recipe.isEnabled)"
                         :class="recipe.isEnabled ? 'bg-firefly-500' : 'bg-gray-200 dark:bg-firefly-700'"
                         class="relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-firefly-400 focus:ring-offset-2"
                         :aria-label="recipe.isEnabled ? 'Hide recipe' : 'Show recipe'"
@@ -106,7 +106,7 @@ async function executeDelete(id: string) {
                     <!-- Delete -->
                     <button
                         type="button"
-                        @click.stop="confirmDeleteId = recipe.id"
+                        @click.stop.prevent="confirmDeleteId = recipe.id"
                         class="p-1.5 text-gray-400 hover:text-red-500 transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-firefly-800"
                         aria-label="Delete recipe"
                     >
