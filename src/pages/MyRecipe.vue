@@ -1,10 +1,29 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRecipesStore } from '../stores/recipes.js'
 import { useRoute } from 'vue-router'
 
 const recipesStore = useRecipesStore()
 const route = useRoute()
+
+// ── Photo upload (add/replace) ───────────────────────────────────────────────
+const imageLoaded = ref(true) // optimistic; flips off if the <img> 404s
+const imageVersion = ref<number | null>(null) // set after an upload to bust the cache
+const uploadingImage = ref(false)
+
+async function onPhotoSelect(e: Event) {
+    const input = e.target as HTMLInputElement
+    const file = input.files?.[0]
+    if (!file) return
+    uploadingImage.value = true
+    try {
+        await recipesStore.uploadRecipeImage(recipe.value.alias, file)
+        imageLoaded.value = true
+        imageVersion.value = Date.now()
+    } finally {
+        uploadingImage.value = false
+    }
+}
 
 const emptyRecipe = {
     alias: '', name: '', id: '', description: '', tags: [],
@@ -29,6 +48,15 @@ onUnmounted(() => {
 
 const recipe = computed(() => recipesStore.recipe)
 
+// Same filename every upload (upsert), so the browser/CDN cache needs busting
+// right after a fresh upload — but not on a normal page load, to keep the
+// image cacheable the rest of the time.
+const heroImageSrc = computed(() => {
+    const base = recipe.value.primaryImages[0]
+    if (!base) return ''
+    return imageVersion.value ? `${base}?v=${imageVersion.value}` : base
+})
+
 function formatAmount(quantity: number, volume: string): string {
     if (!quantity && !volume) return ''
     if (!quantity) return volume
@@ -41,16 +69,44 @@ function formatAmount(quantity: number, volume: string): string {
     <div v-if="recipe.alias" class="max-w-2xl mx-auto px-4 pt-4 pb-12">
 
         <!-- Hero image -->
-        <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border-2 border-firefly-600 dark:border-white shadow-md mb-6">
+        <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border-2 border-firefly-600 dark:border-white shadow-md mb-3 bg-firefly-100 dark:bg-firefly-800">
             <img
+                v-show="imageLoaded"
                 class="w-full h-full object-cover"
                 loading="lazy"
-                :src="recipe.primaryImages[0]"
+                :src="heroImageSrc"
                 :alt="recipe.name"
+                @load="imageLoaded = true"
+                @error="imageLoaded = false"
             />
             <div class="absolute bottom-3 left-3 bg-firefly-700 bg-opacity-80 border border-firefly-600 rounded-xl px-3 py-2 backdrop-blur-sm max-w-[calc(100%-1.5rem)]">
                 <span class="text-xl font-bold tracking-tight text-white capitalize break-words">{{ recipe.name }}</span>
             </div>
+        </div>
+
+        <!-- Change/add photo — deliberately its own control, never the image
+             itself, so a misclick while cooking can't trigger this -->
+        <div class="flex justify-end mb-4">
+            <label class="flex items-center gap-1.5 text-sm text-firefly-500 hover:text-firefly-600 font-medium cursor-pointer">
+                <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    class="sr-only"
+                    :disabled="uploadingImage"
+                    @change="onPhotoSelect"
+                    @click="($event.target as HTMLInputElement).value = ''"
+                />
+                <svg v-if="!uploadingImage" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                {{ uploadingImage ? 'Uploading…' : imageLoaded ? 'Change photo' : 'Add a photo' }}
+            </label>
         </div>
 
         <!-- Title -->

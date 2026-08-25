@@ -132,7 +132,7 @@ function titlePositioning(tp: string) {
                     <button
                         type="button"
                         @click="loadRecipe(recipe.alias)"
-                        class="absolute inset-0 w-full h-full"
+                        class="absolute inset-0 w-full h-full bg-firefly-100 dark:bg-firefly-800"
                     >
                         <img
                             v-if="recipe.primaryImages[2]"
@@ -142,6 +142,7 @@ function titlePositioning(tp: string) {
                             sizes="(max-width: 767px) 100vw, 33vw"
                             :alt="recipe.name"
                             class="w-full h-full object-cover"
+                            @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
                         />
                         <image-skeleton v-else class="w-full h-full" />
                     </button>
