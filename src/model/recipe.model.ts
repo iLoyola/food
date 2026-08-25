@@ -23,6 +23,9 @@ export interface RecipeModel {
     ],
     primaryImages: string[],
     notes?: string,
+    // Admin-only: problems flagged by AI recipe-photo scanning. Never shown
+    // on the public site — see the recipes.scan_issues column comment.
+    scanIssues?: string,
     isEnabled: boolean,
     titlePosition: string,
     boundRecipes?: [

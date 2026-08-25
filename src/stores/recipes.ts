@@ -18,13 +18,39 @@ export type RecipeFormPayload = {
     ingredients: { quantity: number; volume: string; ingredient: string; process: string; extra: string }[]
     steps: { instruction: string }[]
     boundRecipes: { name: string; url: string }[]
+    // Admin-only reviewer note from AI scanning — never rendered on the public
+    // site. Optional since manually-created recipes never have one.
+    scanIssues?: string
+}
+
+// What recipe-parser can actually extract from a photo — a strict subset of
+// RecipeFormPayload. alias/titlePosition/isEnabled/reference/boundRecipes
+// aren't derivable from an image, so the Edge Function never returns them.
+export type RecipeExtraction = {
+    name: string
+    description: string
+    tags: string[]
+    notes: string
+    // Problems with the scan itself (blurry/cut-off/unreadable sections) — never
+    // written into `notes`, so it can't accidentally end up published if the
+    // recipe goes live as-is. Persisted separately (recipes.scan_issues).
+    scanIssues: string
+    ingredients: { quantity: number; volume: string; ingredient: string; process: string; extra: string }[]
+    steps: { instruction: string }[]
 }
 
 type State = {
     recipes: RecipeModel[]
     adminRecipes: RecipeModel[]
     isRequestPending: boolean
+    isParsing: boolean
     recipe: RecipeModel
+}
+
+// Escapes LIKE wildcards so a manually-typed alias containing % or _
+// is matched literally instead of as a pattern.
+function escapeLike(value: string): string {
+    return value.replace(/[\\%_]/g, (c) => `\\${c}`)
 }
 
 function mapDbRecipe(r: any): RecipeModel {
@@ -36,6 +62,7 @@ function mapDbRecipe(r: any): RecipeModel {
         reference: r.reference ?? undefined,
         tags: r.tags ?? [],
         notes: r.notes ?? undefined,
+        scanIssues: r.scan_issues ?? undefined,
         isEnabled: r.is_enabled,
         titlePosition: r.title_position,
         primaryImages: [],
@@ -66,6 +93,7 @@ export const useRecipesStore = defineStore('recipes', {
         recipes: [],
         adminRecipes: [],
         isRequestPending: false,
+        isParsing: false,
         recipe: {
             alias: '',
             name: '',
@@ -121,9 +149,52 @@ export const useRecipesStore = defineStore('recipes', {
             }
         },
 
+        // Returns `alias` if it's free, or the first `alias-2`, `alias-3`, …
+        // that isn't already taken. Pass `excludeId` when checking on behalf
+        // of a recipe being edited, so it doesn't collide with itself.
+        async checkAliasAvailable(alias: string, excludeId?: string): Promise<string> {
+            let query = supabase
+                .from('recipes')
+                .select('alias')
+                .like('alias', `${escapeLike(alias)}%`)
+            if (excludeId) query = query.neq('id', excludeId)
+            const { data, error } = await query
+            if (error) throw error
+
+            const taken = new Set((data ?? []).map((r: any) => r.alias as string))
+            if (!taken.has(alias)) return alias
+            let n = 2
+            while (taken.has(`${alias}-${n}`)) n++
+            return `${alias}-${n}`
+        },
+
+        async parseRecipeImages(images: string[]): Promise<RecipeExtraction> {
+            const toast = useToastStore()
+            try {
+                this.isParsing = true
+                const { data, error } = await supabase.functions.invoke('recipe-parser', {
+                    body: { images },
+                })
+                if (error) throw error
+                return data as RecipeExtraction
+            } catch (err) {
+                console.error(err)
+                toast.show('Failed to parse recipe photo. Please try again or enter it manually.', 'error')
+                throw err
+            } finally {
+                this.isParsing = false
+            }
+        },
+
         async createRecipe(payload: RecipeFormPayload, imageFile?: File | null): Promise<void> {
             const toast = useToastStore()
             try {
+                const uniqueAlias = await this.checkAliasAvailable(payload.alias)
+                if (uniqueAlias !== payload.alias) {
+                    toast.show(`"${payload.alias}" was already taken — saved as "${uniqueAlias}" instead.`, 'info')
+                    payload = { ...payload, alias: uniqueAlias }
+                }
+
                 const { data, error } = await supabase
                     .from('recipes')
                     .insert({
@@ -135,6 +206,7 @@ export const useRecipesStore = defineStore('recipes', {
                         is_enabled: payload.isEnabled,
                         notes: payload.notes || null,
                         reference: payload.reference || null,
+                        scan_issues: payload.scanIssues?.trim() || null,
                     })
                     .select('id')
                     .single()
@@ -207,6 +279,7 @@ export const useRecipesStore = defineStore('recipes', {
                         is_enabled: payload.isEnabled,
                         notes: payload.notes || null,
                         reference: payload.reference || null,
+                        scan_issues: payload.scanIssues?.trim() || null,
                     })
                     .eq('id', id)
                 if (error) throw error
