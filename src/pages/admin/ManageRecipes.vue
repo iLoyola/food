@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useRecipesStore } from '../../stores/recipes.js'
 
-const router = useRouter()
 const store = useRecipesStore()
 
 const confirmDeleteId = ref<string | null>(null)
@@ -64,9 +62,10 @@ async function executeDelete(id: string) {
             <div v-for="recipe in store.adminRecipes" :key="recipe.id">
 
                 <!-- Normal row -->
-                <div
+                <router-link
                     v-if="confirmDeleteId !== recipe.id"
-                    class="flex items-center gap-3 px-4 py-3"
+                    :to="{ name: 'admin-recipe-edit', params: { id: recipe.id } }"
+                    class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-firefly-800 transition-colors"
                 >
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
@@ -93,7 +92,7 @@ async function executeDelete(id: string) {
                         type="button"
                         role="switch"
                         :aria-checked="recipe.isEnabled"
-                        @click="store.toggleRecipeEnabled(recipe.id, !recipe.isEnabled)"
+                        @click.stop="store.toggleRecipeEnabled(recipe.id, !recipe.isEnabled)"
                         :class="recipe.isEnabled ? 'bg-firefly-500' : 'bg-gray-200 dark:bg-firefly-700'"
                         class="relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-firefly-400 focus:ring-offset-2"
                         :aria-label="recipe.isEnabled ? 'Hide recipe' : 'Show recipe'"
@@ -104,22 +103,10 @@ async function executeDelete(id: string) {
                         />
                     </button>
 
-                    <!-- Edit -->
-                    <button
-                        type="button"
-                        @click="router.push({ name: 'admin-recipe-edit', params: { id: recipe.id } })"
-                        class="p-1.5 text-gray-400 hover:text-firefly-500 transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-firefly-800"
-                        aria-label="Edit recipe"
-                    >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z" />
-                        </svg>
-                    </button>
-
                     <!-- Delete -->
                     <button
                         type="button"
-                        @click="confirmDeleteId = recipe.id"
+                        @click.stop="confirmDeleteId = recipe.id"
                         class="p-1.5 text-gray-400 hover:text-red-500 transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-firefly-800"
                         aria-label="Delete recipe"
                     >
@@ -127,7 +114,7 @@ async function executeDelete(id: string) {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </button>
-                </div>
+                </router-link>
 
                 <!-- Delete confirm row -->
                 <div
