@@ -35,7 +35,7 @@ function storageKey(): string {
         if (ref) return `sb-${ref}-auth-token`
     } catch { /* fall through */ }
     // Fall back to the known project ref so local runs without env still work.
-    return 'sb-bzjsrmvwvbtudurnjyvx-auth-token'
+    return 'sb-usilyppeygtyqitbqatk-auth-token'
 }
 
 // Write the mock auth state directly — no browser sign-in needed.
