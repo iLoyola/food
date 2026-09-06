@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
+[functions]
+  directory = "netlify/functions"
+
 # Required for Vue Router history mode — all routes serve index.html
 [[redirects]]
   from = "/*"
