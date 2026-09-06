@@ -239,7 +239,7 @@ function resetForm() {
                         : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
                     class="flex-1 py-2 rounded-lg text-sm font-medium transition-all"
                 >
-                    {{ isEditing ? 'Editing…' : 'Add item' }}
+                    {{ isEditing ? 'Editing…' : 'Add' }}
                 </button>
                 <button
                     type="button"
@@ -249,7 +249,7 @@ function resetForm() {
                         : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
                     class="flex-1 py-2 rounded-lg text-sm font-medium transition-all"
                 >
-                    Items ({{ itemsStore.items.length }})
+                    Chosen ({{ itemsStore.items.length }})
                 </button>
             </div>
         </div>
@@ -268,7 +268,7 @@ function resetForm() {
                     v-else-if="itemsStore.items.length === 0"
                     class="px-4 py-6 text-center text-sm text-gray-600 dark:text-gray-400"
                 >
-                    No items yet. Switch to Add item to get started.
+                    No items yet. Switch to Add to get started.
                 </div>
                 <button
                     v-for="item in sortedItems"
