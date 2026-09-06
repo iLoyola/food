@@ -2,6 +2,8 @@ import { ref, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '../supabase/client.js'
 import { useToastStore } from './toast.js'
+import { useConnectionStore } from './connection.js'
+import { isNetworkError } from '../net/network-error.js'
 import { MarketplaceModel } from '../model/marketplace.model.js'
 
 export interface AdminMarketplace extends MarketplaceModel {
@@ -32,9 +34,11 @@ export const useMarketplacesStore = defineStore('marketplaces', () => {
                 name: m.name,
                 isEnabled: m.is_enabled
             })))
+            useConnectionStore().reportOnline()
         } catch (error) {
             console.error(error)
-            toast.show('Failed to load marketplaces. Please try again.', 'error')
+            if (isNetworkError(error)) useConnectionStore().reportOffline()
+            else toast.show('Failed to load marketplaces. Please try again.', 'error')
         } finally {
             loading.value = false
         }

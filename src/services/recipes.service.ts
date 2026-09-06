@@ -1,5 +1,7 @@
 import { supabase } from '../supabase/client.js'
 import { RecipeModel } from '../model/recipe.model.js'
+import { useConnectionStore } from '../stores/connection.js'
+import { isNetworkError } from '../net/network-error.js'
 
 type DbIngredient = {
     sort_order: number
@@ -83,8 +85,10 @@ export const getRecipes = async (): Promise<RecipeModel[]> => {
 
     if (error) {
         console.error(error)
+        if (isNetworkError(error)) useConnectionStore().reportOffline()
         return []
     }
 
+    useConnectionStore().reportOnline()
     return (data as DbRecipe[]).map(toRecipeModel)
 }

@@ -2,6 +2,8 @@ import { ref, reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '../supabase/client.js'
 import { useToastStore } from './toast.js'
+import { useConnectionStore } from './connection.js'
+import { isNetworkError } from '../net/network-error.js'
 import { ItemModel } from '../model/item.model.js'
 import { CategoryModel } from '../model/category.model.js'
 import { MarketplaceModel } from '../model/marketplace.model.js'
@@ -100,9 +102,11 @@ export const useItemsStore = defineStore('items', () => {
             knownItems.push(...all)
             items.splice(0, items.length)
             items.push(...all.filter(i => i.isEnabled))
+            useConnectionStore().reportOnline()
         } catch (error) {
             console.error(error)
-            toast.show('Failed to load items. Please try again.', 'error')
+            if (isNetworkError(error)) useConnectionStore().reportOffline()
+            else toast.show('Failed to load items. Please try again.', 'error')
         } finally {
             loading.value = false
         }

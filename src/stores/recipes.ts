@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { RecipeModel } from '../model/recipe.model.js'
 import { getRecipes } from '../services/recipes.service.js'
 import { useToastStore } from './toast.js'
+import { useConnectionStore } from './connection.js'
+import { isNetworkError } from '../net/network-error.js'
 import { supabase } from '../supabase/client.js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -128,7 +130,8 @@ export const useRecipesStore = defineStore('recipes', {
                 this.recipes = await getRecipes()
             } catch (error) {
                 console.error(error)
-                toast.show('Failed to load recipes. Please try again.', 'error')
+                if (isNetworkError(error)) useConnectionStore().reportOffline()
+                else toast.show('Failed to load recipes. Please try again.', 'error')
             } finally {
                 this.isRequestPending = false
             }

@@ -1,16 +1,29 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { supabase } from '../supabase/client.js'
+import { useConnectionStore } from './connection.js'
+import { isNetworkError } from '../net/network-error.js'
 import type { User } from '@supabase/supabase-js'
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref<User | null>(null)
 
+    // Reads the current session into reactive state. Also used as a recovery
+    // task by the connection store once the backend is reachable again.
+    async function syncSession() {
+        try {
+            const { data } = await supabase.auth.getSession()
+            user.value = data.session?.user ?? null
+            useConnectionStore().reportOnline()
+        } catch (err) {
+            if (isNetworkError(err)) useConnectionStore().reportOffline()
+            else console.error(err)
+        }
+    }
+
     // Call once at app startup to sync reactive state with the Supabase session
     function init() {
-        supabase.auth.getSession().then(({ data }) => {
-            user.value = data.session?.user ?? null
-        })
+        void syncSession()
         supabase.auth.onAuthStateChange((_event, session) => {
             user.value = session?.user ?? null
         })
@@ -36,5 +49,5 @@ export const useAuthStore = defineStore('auth', () => {
         if (error) throw error
     }
 
-    return { user, init, signIn, signUp, signInWithGoogle, signOut }
+    return { user, init, syncSession, signIn, signUp, signInWithGoogle, signOut }
 })
