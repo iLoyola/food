@@ -42,7 +42,7 @@ async function justPurchased() {
 <template>
     <div class="max-w-3xl mx-auto">
 
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white px-4 pt-4 mb-1">Shopping</h1>
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white px-4 pt-4 mb-1">Shopping List</h1>
 
         <!-- Empty state — no items in the list at all -->
         <div

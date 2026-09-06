@@ -304,7 +304,7 @@ function resetForm() {
         <div class="bg-white dark:bg-firefly-900 rounded-2xl p-5">
 
             <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-4">
-                {{ isEditing ? form.product : 'Add new item' }}
+                {{ isEditing ? form.product : 'Add Item to Shopping List' }}
             </h2>
 
             <!-- Product -->

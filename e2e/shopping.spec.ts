@@ -5,8 +5,8 @@ test.describe('Shopping page', () => {
         await authedPage.goto('/shopping')
     })
 
-    test('renders the Shopping heading', async ({ authedPage }) => {
-        await expect(authedPage.getByRole('heading', { name: 'Shopping' })).toBeVisible()
+    test('renders the Shopping List heading', async ({ authedPage }) => {
+        await expect(authedPage.getByRole('heading', { name: 'Shopping List' })).toBeVisible()
     })
 
     test('shows all items from the mock data', async ({ authedPage }) => {
